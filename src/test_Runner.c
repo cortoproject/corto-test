@@ -12,22 +12,21 @@
 void test_updateProgress(test_Runner this) {
     int i;
     char *str;
-    corto_asprintf(&str, "%s: OK:%d, FAIL:%d", 
-        this->name, 
+    corto_asprintf(&str, "%s: OK:%d, FAIL:%d",
+        this->name,
         test_CaseListSize(this->successes),
         test_CaseListSize(this->failures));
 
     for (i = 0; i < strlen(str) + 2 * 2; i++) {
         printf("\b");
     }
-
     printf("%s", str);
     fflush(stdout);
 }
 /* $end */
 
 corto_int16 _test_Runner_construct(test_Runner this) {
-/* $begin(::corto::test::Runner::construct) */
+/* $begin(corto/test/Runner/construct) */
     /* If a testcase is provided, run it. Otherwise, discover testcases and
      * forward to separate process. */
     if (this->testcase) {
@@ -43,7 +42,7 @@ corto_int16 _test_Runner_construct(test_Runner this) {
             } else {
                 corto_object prev = corto_setOwner(this);
                 corto_define(suite);
-                corto_setOwner(prev);            
+                corto_setOwner(prev);
             }
 
             corto_delete(suite);
@@ -61,7 +60,7 @@ error:
 }
 
 corto_void _test_Runner_destruct(test_Runner this) {
-/* $begin(::corto::test::Runner::destruct) */
+/* $begin(corto/test/Runner/destruct) */
     if (!this->testcase) {
         test_updateProgress(this);
         printf("\n");
@@ -70,7 +69,7 @@ corto_void _test_Runner_destruct(test_Runner this) {
 }
 
 corto_void _test_Runner_runTest(test_Runner this, corto_object observable) {
-/* $begin(::corto::test::Runner::runTest) */
+/* $begin(corto/test/Runner/runTest) */
 
     if (corto_instanceof(corto_type(test_Case_o), observable)) {
         corto_id testcaseId;
@@ -92,8 +91,12 @@ corto_void _test_Runner_runTest(test_Runner this, corto_object observable) {
             test_CaseListAppend(this->successes, observable);
         }
         this->testsRun++;
-        if (!(this->testsRun % 8)) {
-            test_updateProgress(this);
+
+        /* Don't print statistics when in CI mode */
+        if (strcmp(corto_getenv("CI"), "true")) {
+            if (!(this->testsRun % 8)) {
+                test_updateProgress(this);
+            }
         }
     }
 /* $end */

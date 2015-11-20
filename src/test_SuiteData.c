@@ -9,7 +9,7 @@
 #include "test.h"
 
 corto_int16 _test_SuiteData_construct(test_SuiteData this) {
-/* $begin(::corto::test::SuiteData::construct) */
+/* $begin(corto/test/SuiteData/construct) */
 
     if (this->test) {
         this->result.success = TRUE;
@@ -35,7 +35,7 @@ error:
 }
 
 corto_void _test_SuiteData_setup_v(test_SuiteData this) {
-/* $begin(::corto::test::SuiteData::setup) */
+/* $begin(corto/test/SuiteData/setup) */
 
 	CORTO_UNUSED(this);
 
@@ -43,7 +43,7 @@ corto_void _test_SuiteData_setup_v(test_SuiteData this) {
 }
 
 corto_void _test_SuiteData_teardown_v(test_SuiteData this) {
-/* $begin(::corto::test::SuiteData::teardown) */
+/* $begin(corto/test/SuiteData/teardown) */
 
 	CORTO_UNUSED(this);
 	

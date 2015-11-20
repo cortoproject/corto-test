@@ -1,4 +1,4 @@
-# ::corto::test
+# /corto/test
 ### assert(bool condition,string $condition,uint32 $__line)
 #### condition
 #### $condition

@@ -93,7 +93,8 @@ corto_void _test_Runner_runTest(test_Runner this, corto_object observable) {
         this->testsRun++;
 
         /* Don't print statistics when in CI mode */
-        if (strcmp(corto_getenv("CI"), "true")) {
+        corto_string ciEnv = corto_getenv("CI");
+        if (!ciEnv || strcmp(ciEnv, "true")) {
             if (!(this->testsRun % 8)) {
                 test_updateProgress(this);
             }

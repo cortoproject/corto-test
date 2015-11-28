@@ -98,6 +98,9 @@ corto_void _test_Runner_runTest(test_Runner this, corto_object observable) {
             if (!(this->testsRun % 8)) {
                 test_updateProgress(this);
             }
+        } else {
+            /* When in CI mode, show each individual testcase */
+            printf("%s: %s\n", testcaseId, err ? "FAIL" : "OK");
         }
     }
 /* $end */

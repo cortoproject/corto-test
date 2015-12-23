@@ -1,6 +1,6 @@
-#package ::corto::test
+#package corto/test
 
-procedure Case: base=method, kind=procedureKind::METHOD
+procedure Case: base = method, kind = procedureKind::METHOD
 
 void fail(string err)
 bool assert(bool condition, $condition, $__line)
@@ -10,13 +10,14 @@ struct Result::
     member success: bool, readonly
     member errmsg: string
 
-class SuiteData ::
-    member test: test::Case
+class SuiteData::
+    member testcase: test::Case, readonly
     member assertCount: uint32
     member result: test::Result, readonly
     int16 construct()
     void setup() virtual
     void teardown() virtual
+    int16 run(test::Case testcase)
 
 class Suite{class, defaultType=member, defaultProcedureType=Case}::
     int16 construct()

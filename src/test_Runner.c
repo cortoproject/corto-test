@@ -33,10 +33,9 @@ corto_int16 _test_Runner_construct(test_Runner this) {
         corto_object testcase = corto_resolve(NULL, this->testcase);
         if (testcase) {
             corto_type testClass = corto_parentof(testcase);
-            test_SuiteData suite = test_SuiteData(corto_declare(testClass));
-            corto_setref(&suite->test, testcase);
+            test_SuiteData suite = test_SuiteData(corto_create(testClass));
 
-            if (corto_define(suite)) {
+            if (test_SuiteData_run(suite, testcase)) {
                 corto_error("test: failed to define test suite");
                 test_CaseListAppend(this->failures, testcase);
             } else {
@@ -75,16 +74,28 @@ corto_void _test_Runner_runTest(test_Runner this, corto_object observable) {
         corto_id testcaseId;
         corto_int8 err, ret;
 
-        corto_pid pid = corto_procrun("corto", (char*[]){"corto", "--mute", this->lib, corto_fullname(observable, testcaseId), NULL});
+        corto_pid pid = corto_procrun(
+            "corto",
+            (char*[]){
+                "corto",
+                "--mute",
+                this->lib,
+                corto_fullname(observable, testcaseId),
+                NULL
+            }
+        );
+
         if ((err = corto_procwait(pid, &ret)) || ret) {
             if (err > 0) {
                 int i;
                 for (i = 0; i < 255; i++) {
                     fprintf(stderr, "\b");
                 }
-                corto_error("FAIL: %s: test crashed with signal %d", testcaseId, err);
+                corto_error("FAIL: %s: test crashed with signal %d",
+                    testcaseId, err);
             } else {
-                /* Process exited with a returncode != 0, and must've printed an error msg itself */
+                /* Process exited with a returncode != 0 so
+                 * must've printed an error msg itself */
             }
             test_CaseListAppend(this->failures, observable);
         } else {

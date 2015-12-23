@@ -42,6 +42,9 @@
 ### construct()
 #### Returns
 ### result
+### run(/corto/test/Case testcase)
+#### testcase
+#### Returns
 ### setup()
 ### teardown()
-### test
+### testcase

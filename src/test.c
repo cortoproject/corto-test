@@ -73,7 +73,7 @@ corto_void _test_fail(corto_string err) {
     }
 
     corto_error("FAIL: %s:%s",
-        corto_fullname(this->test, id),
+        corto_fullname(this->testcase, id),
         this->result.errmsg ? this->result.errmsg : "");
 
     corto_string lasterr = corto_lasterr();

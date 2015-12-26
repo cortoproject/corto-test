@@ -1,12 +1,12 @@
 /* $CORTO_GENERATED
  *
- * test_Suite.c
+ * Suite.c
  *
  * Only code written between the begin and end tags will be preserved
  * when the file is regenerated.
  */
 
-#include "test.h"
+#include "corto/test/test.h"
 
 corto_int16 _test_Suite_construct(test_Suite this) {
 /* $begin(corto/test/Suite/construct) */

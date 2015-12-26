@@ -6,7 +6,7 @@
  * when the file is regenerated.
  */
 
-#include "test.h"
+#include "corto/test/test.h"
 
 /* $header() */
 corto_threadKey test_suiteKey;
@@ -56,7 +56,6 @@ corto_bool _test_assertEqual(corto_any a, corto_any b, corto_string str_a, corto
 
 corto_void _test_fail(corto_string err) {
 /* $begin(corto/test/fail) */
-    corto_id id;
     int i;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
@@ -73,7 +72,7 @@ corto_void _test_fail(corto_string err) {
     }
 
     corto_error("FAIL: %s:%s",
-        corto_fullname(this->testcase, id),
+        corto_fullpath(NULL, this->testcase),
         this->result.errmsg ? this->result.errmsg : "");
 
     corto_string lasterr = corto_lasterr();

@@ -1,12 +1,12 @@
 /* $CORTO_GENERATED
  *
- * test_Runner.c
+ * Runner.c
  *
  * Only code written between the begin and end tags will be preserved
  * when the file is regenerated.
  */
 
-#include "test.h"
+#include "corto/test/test.h"
 
 /* $header() */
 void test_updateProgress(test_Runner this) {
@@ -80,7 +80,7 @@ corto_void _test_Runner_runTest(test_Runner this, corto_object observable) {
                 "corto",
                 "--mute",
                 this->lib,
-                corto_fullname(observable, testcaseId),
+                corto_fullpath(testcaseId, observable),
                 NULL
             }
         );

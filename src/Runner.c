@@ -50,7 +50,7 @@ corto_int16 _test_Runner_construct(test_Runner this) {
             goto error;
         }
     } else {
-        corto_listen(this, test_Runner_runTest_o, CORTO_ON_DEFINE | CORTO_ON_TREE | CORTO_ON_SELF, root_o, NULL);
+        corto_listen(this, test_Runner_runTest_o, CORTO_ON_DEFINE | CORTO_ON_TREE, root_o, NULL);
     }
     return 0;
 error:
@@ -63,6 +63,7 @@ corto_void _test_Runner_destruct(test_Runner this) {
     if (!this->testcase) {
         test_updateProgress(this);
         printf("\n");
+        corto_silence(this, test_Runner_runTest_o, CORTO_ON_DEFINE | CORTO_ON_TREE, root_o);
     }
 /* $end */
 }

@@ -1,6 +1,6 @@
 #package corto/test
 
-procedure Case: base = method, kind = procedureKind::METHOD
+procedure Case: procedureKind::METHOD, base = method
 
 void fail(string err)
 bool assert(bool condition, $condition, $__line)

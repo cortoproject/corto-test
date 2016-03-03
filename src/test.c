@@ -12,7 +12,11 @@
 corto_threadKey test_suiteKey;
 /* $end */
 
-corto_bool _test_assert(corto_bool condition, corto_string str_condition, corto_uint32 __line) {
+corto_bool _test_assert(
+    corto_bool condition,
+    corto_string str_condition,
+    corto_uint32 __line)
+{
 /* $begin(corto/test/assert) */
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
@@ -32,7 +36,13 @@ corto_bool _test_assert(corto_bool condition, corto_string str_condition, corto_
 /* $end */
 }
 
-corto_bool _test_assertEqual(corto_any a, corto_any b, corto_string str_a, corto_string str_b, corto_uint32 __line) {
+corto_bool _test_assertEqual(
+    corto_any a,
+    corto_any b,
+    corto_string str_a,
+    corto_string str_b,
+    corto_uint32 __line)
+{
 /* $begin(corto/test/assertEqual) */
     corto_equalityKind eq;
     char *assertMsg = NULL;
@@ -54,7 +64,9 @@ corto_bool _test_assertEqual(corto_any a, corto_any b, corto_string str_a, corto
 /* $end */
 }
 
-corto_void _test_fail(corto_string err) {
+corto_void _test_fail(
+    corto_string err)
+{
 /* $begin(corto/test/fail) */
     int i;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
@@ -71,8 +83,11 @@ corto_void _test_fail(corto_string err) {
         fprintf(stderr, "\b");
     }
 
-    corto_error("FAIL: %s:%s",
+    corto_error("%sFAIL%s: %s%s:%s",
+        CORTO_RED,
+        CORTO_NORMAL,
         corto_fullpath(NULL, this->testcase),
+        CORTO_NORMAL,
         this->result.errmsg ? this->result.errmsg : "");
 
     corto_string lasterr = corto_lasterr();

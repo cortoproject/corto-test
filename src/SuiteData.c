@@ -8,14 +8,19 @@
 
 #include "corto/test/test.h"
 
-corto_int16 _test_SuiteData_construct(test_SuiteData this) {
+corto_int16 _test_SuiteData_construct(
+    test_SuiteData this)
+{
 /* $begin(corto/test/SuiteData/construct) */
     CORTO_UNUSED(this);
     return 0;
 /* $end */
 }
 
-corto_int16 _test_SuiteData_run(test_SuiteData this, test_Case testcase) {
+corto_int16 _test_SuiteData_run(
+    test_SuiteData this,
+    test_Case testcase)
+{
 /* $begin(corto/test/SuiteData/run) */
     corto_setref(&this->testcase, testcase);
 
@@ -50,7 +55,9 @@ error:
 /* $end */
 }
 
-corto_void _test_SuiteData_setup_v(test_SuiteData this) {
+corto_void _test_SuiteData_setup_v(
+    test_SuiteData this)
+{
 /* $begin(corto/test/SuiteData/setup) */
 
 	CORTO_UNUSED(this);
@@ -58,7 +65,9 @@ corto_void _test_SuiteData_setup_v(test_SuiteData this) {
 /* $end */
 }
 
-corto_void _test_SuiteData_teardown_v(test_SuiteData this) {
+corto_void _test_SuiteData_teardown_v(
+    test_SuiteData this)
+{
 /* $begin(corto/test/SuiteData/teardown) */
 
 	CORTO_UNUSED(this);

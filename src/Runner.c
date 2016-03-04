@@ -132,11 +132,11 @@ corto_void _test_Runner_runTest(
             }
         } else {
             /* When in CI mode, show each individual testcase */
-            printf("%s: %s%s%s\n",
-                testcaseId,
+            printf("%s%s%s: %s\n",
                 err ? CORTO_RED : CORTO_GREEN,
                 err ? "FAIL" : "PASS",
-                CORTO_NORMAL);
+                CORTO_NORMAL,
+                testcaseId);
         }
     }
 /* $end */

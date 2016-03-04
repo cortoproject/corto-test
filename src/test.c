@@ -92,7 +92,7 @@ corto_void _test_fail(
 
     corto_string lasterr = corto_lasterr();
     if (lasterr) {
-        corto_error("   details: %s", lasterr);
+        fprintf(stderr, "   %sdetails%s: %s\n", CORTO_BOLD, CORTO_NORMAL, lasterr);
     }
 
     /* Run teardown before exit */

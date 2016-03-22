@@ -59,15 +59,13 @@ corto_int16 _test_Runner_construct(
 
             corto_delete(suite);
         } else {
-            corto_error("test: testcase '%s' not found", this->testcase);
-            goto error;
+            /* Testcase not found, don't report error */
         }
     } else {
         corto_listen(this, test_Runner_runTest_o, CORTO_ON_DEFINE | CORTO_ON_TREE, root_o, NULL);
     }
+
     return 0;
-error:
-    return -1;
 /* $end */
 }
 

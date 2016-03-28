@@ -5,6 +5,7 @@ procedure Case: procedureKind::METHOD, base = method
 void fail(string err)
 bool assert(bool condition, $condition, $__line)
 bool assertEqual(any a, any b, $a, $b, $__line)
+void setTimeout(uint32 sec)
 
 struct Result::
     member success: bool, readonly
@@ -14,6 +15,7 @@ class SuiteData::
     member testcase: test::Case, readonly
     member assertCount: uint32
     member result: test::Result, readonly
+    member timeout: uint32, readonly
     int16 construct()
     void setup() virtual
     void teardown() virtual
@@ -29,6 +31,7 @@ class Runner::
     member successes: list{Case}, readonly
     member failures: list{Case}, readonly
     member testsRun: int32, readonly
+    member timer: core/time, readonly
     int16 construct()
     void destruct()
     void runTest() observer

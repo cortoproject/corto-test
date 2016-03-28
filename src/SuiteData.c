@@ -13,10 +13,22 @@ corto_int16 _test_SuiteData_construct(
 {
 /* $begin(corto/test/SuiteData/construct) */
     CORTO_UNUSED(this);
+    this->timeout = 20;
     return 0;
 /* $end */
 }
 
+/* $header(corto/test/SuiteData/run) */
+void* test_Suite_selfDestruct(void *data) {
+    test_SuiteData this = data;
+    extern corto_threadKey test_suiteKey;
+    corto_threadTlsSet(test_suiteKey, this);
+    corto_sleep(this->timeout, 0);
+    test_fail(" test timed out");
+    abort();
+    return NULL;
+}
+/* $end */
 corto_int16 _test_SuiteData_run(
     test_SuiteData this,
     test_Case testcase)
@@ -35,6 +47,9 @@ corto_int16 _test_SuiteData_run(
         attr = corto_setAttr(CORTO_ATTR_DEFAULT);
 
         test_SuiteData_setup(this);
+        if (this->timeout) {
+            //corto_threadNew(test_Suite_selfDestruct, this);
+        }
         this->assertCount = 0;
         corto_call(corto_function(testcase), NULL, this);
         if (!this->assertCount) {

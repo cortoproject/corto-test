@@ -125,8 +125,14 @@ corto_void _test_Runner_runTest(
         /* Don't print statistics when in CI mode */
         corto_string ciEnv = corto_getenv("CI");
         if (!ciEnv || strcmp(ciEnv, "true")) {
-            if (!(this->testsRun % 4)) {
+            corto_time start;
+            corto_timeGet(&start);
+            corto_float64 diff =
+              corto_timeToDouble(start) - corto_timeToDouble(this->timer);
+
+            if (diff > 0.05) {
                 test_updateProgress(this);
+                corto_timeGet(&this->timer);
             }
         } else {
             /* When in CI mode, show each individual testcase */

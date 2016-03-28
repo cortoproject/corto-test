@@ -34,6 +34,10 @@ CORTO_TEST_EXPORT corto_bool _test_assertEqual(
 CORTO_TEST_EXPORT corto_void _test_fail(
     corto_string err);
 #define test_fail(err) _test_fail(err)
+
+CORTO_TEST_EXPORT corto_void _test_setTimeout(
+    corto_uint32 sec);
+#define test_setTimeout(sec) _test_setTimeout(sec)
 #include "corto/test/Case.h"
 #include "corto/test/Result.h"
 #include "corto/test/Runner.h"

@@ -13,6 +13,8 @@
 #### Returns
 ### fail(string err)
 #### err
+### setTimeout(uint32 sec)
+#### sec
 
 ## Case
 
@@ -32,6 +34,7 @@
 ### successes
 ### testcase
 ### testsRun
+### timer
 
 ## Suite
 ### construct()
@@ -48,3 +51,4 @@
 ### setup()
 ### teardown()
 ### testcase
+### timeout

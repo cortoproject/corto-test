@@ -102,6 +102,21 @@ corto_void _test_fail(
 /* $end */
 }
 
+corto_void _test_setTimeout(
+    corto_uint32 sec)
+{
+/* $begin(corto/test/setTimeout) */
+    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    if (!this) {
+        corto_error("test: test::setTimeout called but no testsuite is running!");
+        abort();
+    }
+
+    this->timeout = sec;
+    
+/* $end */
+}
+
 int testMain(int argc, char* argv[]) {
 /* $begin(main) */
     CORTO_UNUSED(argc);

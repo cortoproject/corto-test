@@ -64,6 +64,30 @@ corto_bool _test_assertEqual(
 /* $end */
 }
 
+corto_bool _test_assertstr(
+    corto_string s1,
+    corto_string s2,
+    corto_uint32 __line)
+{
+/* $begin(corto/test/assertstr) */
+    char *assertMsg = NULL;
+    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    if (!this) {
+        corto_error("test: test::fail called but no testsuite is running!");
+        abort();
+    }
+    this->assertCount++;
+
+    if (strcmp(s1, s2)) {
+        corto_asprintf(&assertMsg, "%d: \"%s\" != \"%s\"", __line, s1, s2);
+        test_fail(assertMsg);
+        corto_dealloc(assertMsg);
+    }
+
+    return strcmp(s1, s2);
+/* $end */
+}
+
 corto_void _test_fail(
     corto_string err)
 {
@@ -113,7 +137,7 @@ corto_void _test_setTimeout(
     }
 
     this->timeout = sec;
-    
+
 /* $end */
 }
 

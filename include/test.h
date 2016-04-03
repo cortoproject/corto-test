@@ -12,6 +12,7 @@
 #include "corto/test/_meta.h"
 #include "corto/test/_interface.h"
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,6 +31,12 @@ CORTO_TEST_EXPORT corto_bool _test_assertEqual(
     corto_string str_b,
     corto_uint32 __line);
 #define test_assertEqual(a, b) _test_assertEqual(a, b, #a, #b, __LINE__)
+
+CORTO_TEST_EXPORT corto_bool _test_assertstr(
+    corto_string s1,
+    corto_string s2,
+    corto_uint32 __line);
+#define test_assertstr(s1, s2) _test_assertstr(s1, s2, __LINE__)
 
 CORTO_TEST_EXPORT corto_void _test_fail(
     corto_string err);

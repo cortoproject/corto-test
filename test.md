@@ -11,6 +11,11 @@
 #### $b
 #### $__line
 #### Returns
+### assertstr(string s1,string s2,uint32 $__line)
+#### s1
+#### s2
+#### $__line
+#### Returns
 ### fail(string err)
 #### err
 ### setTimeout(uint32 sec)

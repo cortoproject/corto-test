@@ -60,7 +60,7 @@ corto_int16 _test_SuiteData_run(
 
         corto_setAttr(attr);
     } else {
-        corto_seterr("no test provided for suite '%s'", corto_nameof(this));
+        corto_seterr("no test provided for suite '%s'", corto_idof(this));
         goto error;
     }
 

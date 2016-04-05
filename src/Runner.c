@@ -40,6 +40,7 @@ corto_int16 _test_Runner_construct(
     test_Runner this)
 {
 /* $begin(corto/test/Runner/construct) */
+
     /* If a testcase is provided, run it. Otherwise, discover testcases and
      * forward to separate process. */
     if (this->testcase) {
@@ -102,7 +103,13 @@ corto_void _test_Runner_runTest(
             }
         );
 
-        if ((err = corto_procwait(pid, &ret)) || ret) {
+        if (!pid) {
+            corto_error("%sFAIL%s: %s (%s)\n",
+                CORTO_RED,
+                CORTO_NORMAL,
+                corto_lasterr(),
+                testcaseId);
+        } else if ((err = corto_procwait(pid, &ret)) || ret) {
             if (err > 0) {
                 int i;
                 for (i = 0; i < 255; i++) {
@@ -112,6 +119,19 @@ corto_void _test_Runner_runTest(
                     CORTO_RED,
                     CORTO_NORMAL,
                     testcaseId, err);
+                fprintf(stderr, "  When debugging, use the following command:\n");
+                *(char*)strchr(testcaseId, '(') = '\0';
+                fprintf(stderr, "  corto %s/%s %s\n", corto_cwd(), this->lib, testcaseId);
+            } else if (err < 0) {
+                int i;
+                for (i = 0; i < 255; i++) {
+                    fprintf(stderr, "\b");
+                }
+                fprintf(stderr, "%sFAIL%s: %s (%s)\n",
+                    CORTO_RED,
+                    CORTO_NORMAL,
+                    corto_lasterr(),
+                    testcaseId);
             } else {
                 /* Process exited with a returncode != 0 so
                  * must've printed an error msg itself */

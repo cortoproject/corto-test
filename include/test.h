@@ -6,11 +6,11 @@
 #ifndef CORTO_TEST_H
 #define CORTO_TEST_H
 
-#include "corto/corto.h"
-#include "corto/test/_type.h"
-#include "corto/test/_api.h"
-#include "corto/test/_meta.h"
-#include "corto/test/_interface.h"
+#include <corto/corto.h>
+#include <corto/test/_interface.h>
+#include <corto/test/_type.h>
+#include <corto/test/_api.h>
+#include <corto/test/_meta.h>
 
 
 #ifdef __cplusplus
@@ -32,11 +32,21 @@ CORTO_TEST_EXPORT corto_bool _test_assertEqual(
     corto_uint32 __line);
 #define test_assertEqual(a, b) _test_assertEqual(a, b, #a, #b, __LINE__)
 
+CORTO_TEST_EXPORT corto_bool _test_assertint(
+    corto_uint64 i1,
+    corto_uint64 i2,
+    corto_string str_i1,
+    corto_string str_i2,
+    corto_uint32 __line);
+#define test_assertint(i1, i2) _test_assertint(i1, i2, #i1, #i2, __LINE__)
+
 CORTO_TEST_EXPORT corto_bool _test_assertstr(
     corto_string s1,
     corto_string s2,
+    corto_string str_s1,
+    corto_string str_s2,
     corto_uint32 __line);
-#define test_assertstr(s1, s2) _test_assertstr(s1, s2, __LINE__)
+#define test_assertstr(s1, s2) _test_assertstr(s1, s2, #s1, #s2, __LINE__)
 
 CORTO_TEST_EXPORT corto_void _test_fail(
     corto_string err);
@@ -45,11 +55,11 @@ CORTO_TEST_EXPORT corto_void _test_fail(
 CORTO_TEST_EXPORT corto_void _test_setTimeout(
     corto_uint32 sec);
 #define test_setTimeout(sec) _test_setTimeout(sec)
-#include "corto/test/Case.h"
-#include "corto/test/Result.h"
-#include "corto/test/Runner.h"
-#include "corto/test/Suite.h"
-#include "corto/test/SuiteData.h"
+#include <corto/test/Case.h>
+#include <corto/test/Result.h>
+#include <corto/test/Runner.h>
+#include <corto/test/Suite.h>
+#include <corto/test/SuiteData.h>
 
 #ifdef __cplusplus
 }

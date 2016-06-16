@@ -6,7 +6,7 @@
  * when the file is regenerated.
  */
 
-#include "corto/test/test.h"
+#include <corto/test/test.h>
 
 /* $header() */
 void test_updateProgress(test_Runner this) {

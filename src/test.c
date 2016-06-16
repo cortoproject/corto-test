@@ -6,7 +6,7 @@
  * when the file is regenerated.
  */
 
-#include "corto/test/test.h"
+#include <corto/test/test.h>
 
 /* $header() */
 corto_threadKey test_suiteKey;
@@ -64,9 +64,50 @@ corto_bool _test_assertEqual(
 /* $end */
 }
 
+corto_bool _test_assertint(
+    corto_uint64 i1,
+    corto_uint64 i2,
+    corto_string str_i1,
+    corto_string str_i2,
+    corto_uint32 __line)
+{
+/* $begin(corto/test/assertint) */
+    char *assertMsg = NULL;
+    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    if (!this) {
+        corto_error("test: test::fail called but no testsuite is running!");
+        abort();
+    }
+    this->assertCount++;
+
+    if (i1 != i2) {
+        char *si1, *si2;
+        if (isdigit(*str_i1) || (*str_i1 == '-')) {
+            si1 = strdup(str_i1);
+        } else {
+            corto_asprintf(&si1, "%s (%lld)", str_i1, i1);
+        }
+        if (isdigit(*str_i2) || (*str_i2 == '-')) {
+            si2 = strdup(str_i2);
+        } else {
+            corto_asprintf(&si2, "%s (%lld)", str_i2, i2);
+        }
+        corto_asprintf(&assertMsg, "%d: %s != %s", __line, si1, si2);
+        test_fail(assertMsg);
+        corto_dealloc(assertMsg);
+        corto_dealloc(si1);
+        corto_dealloc(si2);
+    }
+
+    return i1 == i2;
+/* $end */
+}
+
 corto_bool _test_assertstr(
     corto_string s1,
     corto_string s2,
+    corto_string str_s1,
+    corto_string str_s2,
     corto_uint32 __line)
 {
 /* $begin(corto/test/assertstr) */
@@ -79,7 +120,7 @@ corto_bool _test_assertstr(
     this->assertCount++;
 
     if (strcmp(s1, s2)) {
-        corto_asprintf(&assertMsg, "%d: \"%s\" != \"%s\"", __line, s1, s2);
+        corto_asprintf(&assertMsg, "%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
     }

@@ -11,9 +11,18 @@
 #### $b
 #### $__line
 #### Returns
-### assertstr(string s1,string s2,uint32 $__line)
+### assertint(uint64 i1,uint64 i2,string $i1,string $i2,uint32 $__line)
+#### i1
+#### i2
+#### $i1
+#### $i2
+#### $__line
+#### Returns
+### assertstr(string s1,string s2,string $s1,string $s2,uint32 $__line)
 #### s1
 #### s2
+#### $s1
+#### $s2
 #### $__line
 #### Returns
 ### fail(string err)

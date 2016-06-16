@@ -6,7 +6,7 @@
  * when the file is regenerated.
  */
 
-#include "corto/test/test.h"
+#include <corto/test/test.h>
 
 corto_int16 _test_Suite_construct(
     test_Suite this)

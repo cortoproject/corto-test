@@ -4,7 +4,8 @@ procedure Case: procedureKind::METHOD, base = method
 
 void fail(string err)
 bool assert(bool condition, $condition, $__line)
-bool assertstr(string s1, string s2, $__line)
+bool assertstr(string s1, string s2, $s1, $s2, $__line)
+bool assertint(uint64 i1, uint64 i2, $i1, $i2, $__line)
 bool assertEqual(any a, any b, $a, $b, $__line)
 void setTimeout(uint32 sec)
 

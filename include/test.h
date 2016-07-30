@@ -8,11 +8,6 @@
 
 #include <corto/corto.h>
 #include <corto/test/_interface.h>
-
-#include <corto/test/_type.h>
-#include <corto/test/_api.h>
-#include <corto/test/_meta.h>
-
 /* $header() */
 #ifdef __cplusplus
 extern "C" {
@@ -27,9 +22,15 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
 #endif
 /* $end */
 
+
+#include <corto/test/_type.h>
+#include <corto/test/_api.h>
+#include <corto/test/_meta.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 CORTO_TEST_EXPORT corto_bool _test_assert(
     corto_bool condition,
@@ -78,3 +79,4 @@ CORTO_TEST_EXPORT corto_void _test_setTimeout(
 }
 #endif
 #endif
+

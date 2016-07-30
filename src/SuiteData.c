@@ -13,14 +13,13 @@ corto_int16 _test_SuiteData_construct(
 {
 /* $begin(corto/test/SuiteData/construct) */
     CORTO_UNUSED(this);
-    this->timeout.sec = 10;
+    this->timeout.sec = 5;
     this->timeout.nanosec = 0;
     return 0;
 /* $end */
 }
 
 /* $header(corto/test/SuiteData/run) */
-
 typedef struct test_guard_t {
     test_SuiteData suite;
     corto_object testcase;
@@ -72,7 +71,8 @@ void* test_guard(void *arg) {
         }
     } while (!quit);
 
-    if (quit) {
+    /* Don't quit testcase when being traced (GDB) */
+    if (quit && (!corto_beingTraced())) {
         test_erase();
         corto_id timeFmt; sprintf(timeFmt, "%d.%.9u", timeout.sec, timeout.nanosec);
         char ch, *ptr = &timeFmt[strlen(timeFmt) - 1];

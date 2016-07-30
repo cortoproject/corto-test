@@ -40,12 +40,21 @@ corto_int16 _test_Runner_construct(
     test_Runner this)
 {
 /* $begin(corto/test/Runner/construct) */
+    corto_object testroot = corto_lookup(root_o, "test");
+    if (!testroot) {
+        corto_seterr("test: /test not found");
+        goto error;
+    }
 
     /* If a testcase is provided, run it. Otherwise, discover testcases and
      * forward to separate process. */
     if (this->testcase) {
-        corto_object testcase = corto_resolve(NULL, this->testcase);
+        corto_object testcase = corto_resolve(testroot, this->testcase);
         if (testcase) {
+            corto_time start;
+            corto_timeGet(&start);
+
+            corto_trace("test:   START %s", this->testcase);
             corto_type testClass = corto_parentof(testcase);
             test_SuiteData suite = test_SuiteData(corto_create(testClass));
 
@@ -56,17 +65,36 @@ corto_int16 _test_Runner_construct(
                 corto_object prev = corto_setOwner(this);
                 corto_define(suite);
                 corto_setOwner(prev);
+
+                corto_time now;
+                corto_timeGet(&now);
+                now = corto_timeSub(now, start);
+                corto_id timeFmt; sprintf(timeFmt, "%d.%.9u", now.sec, now.nanosec);
+                char ch, *ptr = &timeFmt[strlen(timeFmt) - 1];
+                for (; (ch = *ptr) != '.'; ptr --) {
+                    if (ch == '0')
+                        ptr[1] = '\0';
+                    else
+                        break;
+                }
+                corto_trace("test:   DONE  %s (%ss)", this->testcase, timeFmt);
             }
 
             corto_delete(suite);
+
         } else {
             /* Testcase not found, don't report error */
+            corto_trace("test: %s NOT FOUND IN %s", this->name);
         }
     } else {
         corto_listen(this, test_Runner_runTest_o, CORTO_ON_DEFINE | CORTO_ON_TREE, root_o, NULL);
     }
 
+    corto_release(testroot);
+
     return 0;
+error:
+    return -1;
 /* $end */
 }
 
@@ -92,13 +120,22 @@ corto_void _test_Runner_runTest(
         corto_id testcaseId;
         corto_int8 err, ret;
 
+        test_id(testcaseId, observable);
+
+        {
+            corto_id cmd;
+            corto_trace("\ntest: TESTCASE %s", testcaseId);
+            corto_trace("test:   EXEC  %s",
+                test_command(cmd, this->lib, observable));
+        }
+
         corto_pid pid = corto_procrun(
             "corto",
             (char*[]){
                 "corto",
                 "--mute",
                 this->lib,
-                corto_fullpath(testcaseId, observable),
+                testcaseId,
                 NULL
             }
         );
@@ -111,17 +148,14 @@ corto_void _test_Runner_runTest(
                 testcaseId);
         } else if ((err = corto_procwait(pid, &ret)) || ret) {
             if (err > 0) {
-                int i;
-                for (i = 0; i < 255; i++) {
-                    fprintf(stderr, "\b");
-                }
+                corto_id cmd;
+                test_erase();
                 fprintf(stderr, "%sFAIL%s: %s: test crashed with signal %d\n",
                     CORTO_RED,
                     CORTO_NORMAL,
                     testcaseId, err);
-                fprintf(stderr, "  When debugging, use the following command:\n");
-                *(char*)strchr(testcaseId, '(') = '\0';
-                fprintf(stderr, "  corto %s/%s %s\n", corto_cwd(), this->lib, testcaseId);
+                fprintf(stderr, "  When debugging, use the following command:\n  %s\n",
+                    test_command(cmd, this->lib, observable));
             } else if (err < 0) {
                 int i;
                 for (i = 0; i < 255; i++) {
@@ -144,7 +178,7 @@ corto_void _test_Runner_runTest(
 
         /* Don't print statistics when in CI mode */
         corto_string ciEnv = corto_getenv("CI");
-        if (!ciEnv || strcmp(ciEnv, "true")) {
+        if ((!ciEnv || stricmp(ciEnv, "true")) && (corto_verbosityGet() > CORTO_TRACE)) {
             corto_time start;
             corto_timeGet(&start);
             corto_float64 diff =
@@ -155,12 +189,15 @@ corto_void _test_Runner_runTest(
                 corto_timeGet(&this->timer);
             }
         } else {
-            /* When in CI mode, show each individual testcase */
-            printf("%s%s%s: %s\n",
-                err ? CORTO_RED : CORTO_GREEN,
-                err ? "FAIL" : "PASS",
-                CORTO_NORMAL,
-                testcaseId);
+            /* When in CI mode, show each individual testcase. Failures are
+             * already reported. */
+            if (!err) {
+                printf("%s%s%s: %s\n",
+                    CORTO_GREEN,
+                    "PASS",
+                    CORTO_NORMAL,
+                    testcaseId);
+            }
         }
     }
 /* $end */

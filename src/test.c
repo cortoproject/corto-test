@@ -10,6 +10,31 @@
 
 /* $header() */
 corto_threadKey test_suiteKey;
+
+void test_erase(void) {
+    int i;
+    for (i = 0; i < 255; i++) {
+        fprintf(stderr, "\b");
+    }
+}
+
+corto_string test_id(corto_id buffer, corto_object testcase) {
+    corto_string result = NULL;
+    corto_object testroot = corto_lookup(root_o, "test");
+    corto_assert(testroot != NULL, "testroot disappeared?");
+    result = corto_path(buffer, testroot, testcase, "/");
+    *(char*)strchr(result, '(') = '\0';
+    corto_release(testroot);
+    return result;
+}
+
+corto_string test_command(corto_id buffer, corto_string lib, corto_object testcase) {
+    corto_id testcaseId;
+    test_id(testcaseId, testcase);
+    sprintf(buffer, "corto %s/%s %s", corto_cwd(), lib, testcaseId);
+    return buffer;
+}
+
 /* $end */
 
 corto_bool _test_assert(
@@ -120,7 +145,11 @@ corto_bool _test_assertstr(
     this->assertCount++;
 
     if (strcmp(s1, s2)) {
-        corto_asprintf(&assertMsg, "%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
+        if (strchr(s1, '\n') || strchr(s2, '\n')) {
+            corto_asprintf(&assertMsg, "%d: \n%s:\n%s\n%s:\n%s\n", __line, str_s1, s1, str_s2, s2);
+        } else {
+            corto_asprintf(&assertMsg, "%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
+        }
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
     }
@@ -168,7 +197,7 @@ corto_void _test_fail(
 }
 
 corto_void _test_setTimeout(
-    corto_uint32 sec)
+    corto_time *t)
 {
 /* $begin(corto/test/setTimeout) */
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
@@ -177,7 +206,9 @@ corto_void _test_setTimeout(
         abort();
     }
 
-    this->timeout = sec;
+    corto_lock(this);
+    this->timeout = *t;
+    corto_unlock(this);
 
 /* $end */
 }

@@ -13,10 +13,23 @@
 #include <corto/test/_api.h>
 #include <corto/test/_meta.h>
 
+/* $header() */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+void test_erase(void);
+corto_string test_id(corto_id buffer, corto_object testcase);
+corto_string test_command(corto_id buffer, corto_string lib, corto_object testcase);
+
+#ifdef __cplusplus
+}
+#endif
+/* $end */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 CORTO_TEST_EXPORT corto_bool _test_assert(
     corto_bool condition,
@@ -53,8 +66,8 @@ CORTO_TEST_EXPORT corto_void _test_fail(
 #define test_fail(err) _test_fail(err)
 
 CORTO_TEST_EXPORT corto_void _test_setTimeout(
-    corto_uint32 sec);
-#define test_setTimeout(sec) _test_setTimeout(sec)
+    corto_time *t);
+#define test_setTimeout(t) _test_setTimeout(t)
 #include <corto/test/Case.h>
 #include <corto/test/Result.h>
 #include <corto/test/Runner.h>
@@ -65,4 +78,3 @@ CORTO_TEST_EXPORT corto_void _test_setTimeout(
 }
 #endif
 #endif
-

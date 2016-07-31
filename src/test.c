@@ -177,10 +177,10 @@ corto_void _test_fail(
         fprintf(stderr, "\b");
     }
 
-    corto_error("%sFAIL%s: %s%s:%s",
+    corto_error("%sFAIL%s: %s%s:%s    ",
         CORTO_RED,
         CORTO_NORMAL,
-        corto_fullpath(NULL, this->testcase),
+        test_id(NULL, this->testcase),
         CORTO_NORMAL,
         this->result.errmsg ? this->result.errmsg : "");
 

@@ -126,9 +126,14 @@ corto_int16 _test_SuiteData_run(
         }
 
         this->assertCount = 0;
-        corto_call(corto_function(testcase), NULL, this);
+        if (corto_function(testcase)->kind == CORTO_PROCEDURE_CDECL) {
+            ((void(*)(corto_object))corto_function(testcase)->fptr)(this);
+        } else {
+            corto_call(corto_function(testcase), NULL, this);
+        }
         if (!this->assertCount) {
             test_fail(" not implemented");
+            goto error;
         }
 
         /* Teardown test */

@@ -118,7 +118,8 @@ corto_void _test_Runner_runTest(
 
     if (corto_instanceof(corto_type(test_Case_o), observable)) {
         corto_id testcaseId;
-        corto_int8 err, ret;
+        corto_int8 err = 0, ret = 0;
+        corto_string ciEnv = corto_getenv("CI");
 
         test_id(testcaseId, observable);
 
@@ -148,14 +149,11 @@ corto_void _test_Runner_runTest(
                 testcaseId);
         } else if ((err = corto_procwait(pid, &ret)) || ret) {
             if (err > 0) {
-                corto_id cmd;
                 test_erase();
                 fprintf(stderr, "%sFAIL%s: %s: test crashed with signal %d\n",
                     CORTO_RED,
                     CORTO_NORMAL,
                     testcaseId, err);
-                fprintf(stderr, "  When debugging, use the following command:\n  %s\n",
-                    test_command(cmd, this->lib, observable));
             } else if (err < 0) {
                 int i;
                 for (i = 0; i < 255; i++) {
@@ -170,6 +168,12 @@ corto_void _test_Runner_runTest(
                 /* Process exited with a returncode != 0 so
                  * must've printed an error msg itself */
             }
+            if (!ciEnv || stricmp(ciEnv, "true")) {
+                corto_id cmd;
+                fprintf(stderr, " Use this command to debug the testcase:\n  %s\n\n",
+                    test_command(cmd, this->lib, observable));
+            }
+
             test_CaseListAppend(this->failures, observable);
         } else {
             test_CaseListAppend(this->successes, observable);
@@ -177,7 +181,6 @@ corto_void _test_Runner_runTest(
         this->testsRun++;
 
         /* Don't print statistics when in CI mode */
-        corto_string ciEnv = corto_getenv("CI");
         if ((!ciEnv || stricmp(ciEnv, "true")) && (corto_verbosityGet() > CORTO_TRACE)) {
             corto_time start;
             corto_timeGet(&start);
@@ -191,7 +194,7 @@ corto_void _test_Runner_runTest(
         } else {
             /* When in CI mode, show each individual testcase. Failures are
              * already reported. */
-            if (!err) {
+            if (!err && !ret) {
                 printf("%s%s%s: %s\n",
                     CORTO_GREEN,
                     "PASS",

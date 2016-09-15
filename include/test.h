@@ -46,6 +46,14 @@ CORTO_TEST_EXPORT corto_bool _test_assertEqual(
     corto_uint32 __line);
 #define test_assertEqual(a, b) _test_assertEqual(a, b, #a, #b, __LINE__)
 
+CORTO_TEST_EXPORT corto_bool _test_assertflt(
+    corto_float64 f1,
+    corto_float64 f2,
+    corto_string str_f1,
+    corto_string str_f2,
+    corto_uint32 __line);
+#define test_assertflt(f1, f2) _test_assertflt(f1, f2, #f1, #f2, __LINE__)
+
 CORTO_TEST_EXPORT corto_bool _test_assertint(
     corto_uint64 i1,
     corto_uint64 i2,

@@ -89,6 +89,45 @@ corto_bool _test_assertEqual(
 /* $end */
 }
 
+corto_bool _test_assertflt(
+    corto_float64 f1,
+    corto_float64 f2,
+    corto_string str_f1,
+    corto_string str_f2,
+    corto_uint32 __line)
+{
+/* $begin(corto/test/assertflt) */
+    char *assertMsg = NULL;
+    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    if (!this) {
+        corto_error("test: test::fail called but no testsuite is running!");
+        abort();
+    }
+    this->assertCount++;
+
+    if (f1 != f2) {
+        char *si1, *si2;
+        if (isdigit(*str_f1) || (*str_f1 == '-')) {
+            si1 = strdup(str_f1);
+        } else {
+            corto_asprintf(&si1, "%s (%f)", str_f1, f1);
+        }
+        if (isdigit(*str_f2) || (*str_f2 == '-')) {
+            si2 = strdup(str_f2);
+        } else {
+            corto_asprintf(&si2, "%s (%f)", str_f2, f2);
+        }
+        corto_asprintf(&assertMsg, "%d: %s != %s", __line, si1, si2);
+        test_fail(assertMsg);
+        corto_dealloc(assertMsg);
+        corto_dealloc(si1);
+        corto_dealloc(si2);
+    }
+
+    return f1 == f2;
+/* $end */
+}
+
 corto_bool _test_assertint(
     corto_uint64 i1,
     corto_uint64 i2,

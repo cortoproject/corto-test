@@ -87,7 +87,6 @@ void* test_guard(void *arg) {
         corto_error("test: testcase '%s' timed out after %ss",
           test_id(NULL, data->testcase),
           timeFmt);
-        corto_release(testroot);
 
         abort();
     }

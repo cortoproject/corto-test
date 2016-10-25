@@ -81,13 +81,14 @@ corto_int16 _test_Runner_construct(
             }
 
             corto_delete(suite);
-
         } else {
             /* Testcase not found, don't report error */
             corto_trace("test: %s NOT FOUND IN %s", this->name);
         }
     } else {
-        corto_listen(this, test_Runner_runTest_o, CORTO_ON_DEFINE | CORTO_ON_TREE, root_o, NULL);
+        if (corto_observer_observe(test_Runner_runTest_o, this, root_o)) {
+            goto error;
+        }
     }
 
     corto_release(testroot);
@@ -105,29 +106,33 @@ corto_void _test_Runner_destruct(
     if (!this->testcase) {
         test_updateProgress(this);
         printf("\n");
-        corto_silence(this, test_Runner_runTest_o, CORTO_ON_DEFINE | CORTO_ON_TREE, root_o);
+        corto_observer_unobserve(test_Runner_runTest_o, this, root_o);
     }
 /* $end */
 }
 
 corto_void _test_Runner_runTest(
     test_Runner this,
-    corto_object observable)
+    corto_eventMask event,
+    corto_object object,
+    corto_observer observer)
 {
 /* $begin(corto/test/Runner/runTest) */
-
-    if (corto_instanceof(corto_type(test_Case_o), observable)) {
+    CORTO_UNUSED(event);
+    CORTO_UNUSED(observer);
+    
+    if (corto_instanceof(corto_type(test_Case_o), object)) {
         corto_id testcaseId;
         corto_int8 err = 0, ret = 0;
         corto_string ciEnv = corto_getenv("CI");
 
-        test_id(testcaseId, observable);
+        test_id(testcaseId, object);
 
         {
             corto_id cmd;
             corto_trace("\ntest: TESTCASE %s", testcaseId);
             corto_trace("test:   EXEC  %s",
-                test_command(cmd, this->lib, observable));
+                test_command(cmd, this->lib, object));
         }
 
         corto_pid pid = corto_procrun(
@@ -171,12 +176,12 @@ corto_void _test_Runner_runTest(
             if (!ciEnv || stricmp(ciEnv, "true")) {
                 corto_id cmd;
                 fprintf(stderr, " Use this command to debug the testcase:\n  %s\n\n",
-                    test_command(cmd, this->lib, observable));
+                    test_command(cmd, this->lib, object));
             }
 
-            test_CaseListAppend(this->failures, observable);
+            test_CaseListAppend(this->failures, object);
         } else {
-            test_CaseListAppend(this->successes, observable);
+            test_CaseListAppend(this->successes, object);
         }
         this->testsRun++;
 

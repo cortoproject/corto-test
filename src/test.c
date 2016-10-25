@@ -183,17 +183,20 @@ corto_bool _test_assertstr(
     }
     this->assertCount++;
 
-    if (strcmp(s1, s2)) {
-        if (strchr(s1, '\n') || strchr(s2, '\n')) {
-            corto_asprintf(&assertMsg, "%d: \n%s:\n%s\n%s:\n%s\n", __line, str_s1, s1, str_s2, s2);
-        } else {
-            corto_asprintf(&assertMsg, "%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
+    if (s1 || s2) {
+        if ((!s1 && s2) || (s1 && !s2) || strcmp(s1, s2)) {
+            if ((s1 && strchr(s1, '\n')) || (s2 && strchr(s2, '\n'))) {
+                corto_asprintf(&assertMsg, "%d: \n%s:\n%s\n%s:\n%s\n", __line, str_s1, s1, str_s2, s2);
+            } else {
+                corto_asprintf(&assertMsg, "%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
+            }
+            test_fail(assertMsg);
+            corto_dealloc(assertMsg);
+            return FALSE;
         }
-        test_fail(assertMsg);
-        corto_dealloc(assertMsg);
     }
 
-    return strcmp(s1, s2);
+    return TRUE;
 /* $end */
 }
 
@@ -216,20 +219,25 @@ corto_void _test_fail(
         fprintf(stderr, "\b");
     }
 
-    corto_error("%sFAIL%s: %s%s:%s    ",
+    corto_error("%sFAIL%s: %s%s%s:%s    ",
         CORTO_RED,
         CORTO_NORMAL,
-        test_id(NULL, this->testcase),
+        this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
+        this->tearingDown ? "/teardown" : test_id(NULL, this->testcase),
         CORTO_NORMAL,
-        this->result.errmsg ? this->result.errmsg : "");
+        err ? err : "");
 
     corto_string lasterr = corto_lasterr();
     if (lasterr) {
         fprintf(stderr, "   %sdetails%s: %s\n", CORTO_BOLD, CORTO_NORMAL, lasterr);
     }
 
-    /* Run teardown before exit */
-    test_SuiteData_teardown(this);
+    /* Run teardown before exit, prevent infinite recursion if assert is called
+     * in teardown. */
+    if (!this->tearingDown) {
+        this->tearingDown = TRUE;
+        test_SuiteData_teardown(this);
+    }
 
     exit(-1);
 /* $end */

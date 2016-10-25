@@ -19,6 +19,7 @@ class SuiteData::
     member assertCount: uint32
     member result: test::Result, readonly
     member timeout: core/time, readonly
+    member tearingDown: bool, readonly
     int16 construct()
     void setup() virtual
     void teardown() virtual
@@ -37,4 +38,4 @@ class Runner::
     member timer: core/time, readonly
     int16 construct()
     void destruct()
-    void runTest(object observable) observer
+    observer runTest: on_define | on_tree

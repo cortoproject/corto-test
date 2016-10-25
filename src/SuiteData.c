@@ -136,7 +136,10 @@ corto_int16 _test_SuiteData_run(
         }
 
         /* Teardown test */
-        test_SuiteData_teardown(this);
+        if (!this->tearingDown) {
+            this->tearingDown = TRUE;
+            test_SuiteData_teardown(this);
+        }
         corto_threadTlsSet(test_suiteKey, NULL);
         corto_setAttr(attr);
 

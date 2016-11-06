@@ -83,7 +83,7 @@ corto_int16 _test_Runner_construct(
             corto_delete(suite);
         } else {
             /* Testcase not found, don't report error */
-            corto_trace("test: %s NOT FOUND IN %s", this->name);
+            corto_trace("test: %s NOT FOUND", this->testcase);
         }
     } else {
         if (corto_observer_observe(test_Runner_runTest_o, this, root_o)) {
@@ -120,7 +120,7 @@ corto_void _test_Runner_runTest(
 /* $begin(corto/test/Runner/runTest) */
     CORTO_UNUSED(event);
     CORTO_UNUSED(observer);
-    
+
     if (corto_instanceof(corto_type(test_Case_o), object)) {
         corto_id testcaseId;
         corto_int8 err = 0, ret = 0;

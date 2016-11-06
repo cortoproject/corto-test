@@ -71,8 +71,7 @@ void* test_guard(void *arg) {
         }
     } while (!quit);
 
-    /* Don't quit testcase when being traced (GDB) */
-    if (quit && (!corto_beingTraced())) {
+    if (quit /*&& (!corto_beingTraced()) */) {
         test_erase();
         corto_id timeFmt; sprintf(timeFmt, "%d.%.9u", timeout.sec, timeout.nanosec);
         char ch, *ptr = &timeFmt[strlen(timeFmt) - 1];
@@ -88,6 +87,7 @@ void* test_guard(void *arg) {
           test_id(NULL, data->testcase),
           timeFmt);
 
+        /* Cause segmentation fault */
         abort();
     }
 

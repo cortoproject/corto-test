@@ -67,6 +67,7 @@ void* test_guard(void *arg) {
                 quit = 1;
             }
         } else {
+            corto_mutexUnlock(&data->m);
             break; /* Testcase finished */
         }
     } while (!quit);
@@ -87,7 +88,6 @@ void* test_guard(void *arg) {
           test_id(NULL, data->testcase),
           timeFmt);
 
-        /* Cause segmentation fault */
         abort();
     }
 

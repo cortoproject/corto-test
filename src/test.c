@@ -243,6 +243,18 @@ corto_void _test_fail(
 /* $end */
 }
 
+corto_bool _test_runslow(void)
+{
+/* $begin(corto/test/runslow) */
+    char *runslow = getenv("CORTO_TEST_RUNSLOW");
+    if (runslow && !strcmp("CORTO_TEST_RUNSLOW", "TRUE")) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+/* $end */
+}
+
 corto_void _test_setTimeout(
     corto_time *t)
 {

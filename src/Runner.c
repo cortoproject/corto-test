@@ -135,19 +135,59 @@ corto_void _test_Runner_runTest(
                 test_command(cmd, this->lib, object));
         }
 
-        corto_pid pid = corto_procrun(
-            "corto",
-            (char*[]){
+        char *tool = getenv("CORTO_TEST_TOOL");
+        corto_pid pid = 0;
+
+        if (!tool || !strcmp(tool, "")) {
+            pid = corto_procrun(
                 "corto",
-                "--mute",
-                this->lib,
-                testcaseId,
-                NULL
+                (char*[]){
+                    "corto",
+                    "--mute",
+                    this->lib,
+                    testcaseId,
+                    NULL
+                }
+            );
+        } else if (!strcmp(tool, "check-memory")) {
+            setenv("CORTO_TEST_RUNSLOW", "TRUE", 1);
+            if (!strcmp(CORTO_OS_STRING, "linux")) {
+                pid = corto_procrun(
+                    "valgrind",
+                    (char*[]){
+                        "valgrind",
+                        "-q",
+                        "corto",
+                        this->lib,
+                        testcaseId,
+                        NULL
+                    }
+                );
+            } else {
+                corto_seterr("check-memory is only supported on Linux (uses valgrind)");
             }
-        );
+        } else if (!strcmp(tool, "check-thread")) {
+            setenv("CORTO_TEST_RUNSLOW", "TRUE", 1);
+            if (!strcmp(CORTO_OS_STRING, "linux")) {
+                pid = corto_procrun(
+                    "valgrind",
+                    (char*[]){
+                        "valgrind",
+                        "-q",
+                        "--tool=helgrind",
+                        "corto",
+                        this->lib,
+                        testcaseId,
+                        NULL
+                    }
+                );
+            } else {
+                corto_seterr("check-thread is only supported on Linux (uses valgrind)");
+            }
+        }
 
         if (!pid) {
-            corto_error("%sFAIL%s: %s (%s)\n",
+            fprintf(stderr, "%sFAIL%s: %s (%s)\n",
                 CORTO_RED,
                 CORTO_NORMAL,
                 corto_lasterr(),

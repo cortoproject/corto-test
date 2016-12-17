@@ -1,0 +1,9 @@
+{
+  "id" : "corto/test",
+  "type" : "package",
+  "value" : {
+    "description" : "Test framework for corto projects",
+    "version" : "1.0.0",
+    "cflags" : ["-Wunused-parameter"]
+  }
+}

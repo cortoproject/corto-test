@@ -78,7 +78,7 @@ corto_bool _test_assertEqual(
     }
     this->assertCount++;
 
-    eq = corto_type_compare(a, b);
+    eq = corto_comparea(a, b);
     if (eq != CORTO_EQ) {
         corto_asprintf(&assertMsg, "%d: assert(%s == %s)", __line, str_a, str_b);
         test_fail(assertMsg);

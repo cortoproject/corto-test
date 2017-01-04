@@ -129,7 +129,7 @@ corto_void _test_Runner_runTest(
         test_id(testcaseId, object);
 
         {
-            corto_id cmd;
+            corto_id cmd; (void)cmd;
             corto_trace("\ntest: TESTCASE %s", testcaseId);
             corto_trace("test:   EXEC  %s",
                 test_command(cmd, this->lib, object));

@@ -22,6 +22,8 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
 #endif
 /* $end */
 
+#include <corto/core/c/c.h>
+#include <corto/lang/c/c.h>
 
 #include <corto/test/_type.h>
 

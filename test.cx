@@ -26,7 +26,7 @@ class SuiteData::
     void teardown() virtual
     int16 run(test/Case testcase)
 
-class Suite{class, defaultType=member, defaultProcedureType=test/Case}::
+class Suite{class, options={defaultType=member, defaultProcedureType=test/Case}}::
     int16 construct()
 
 class Runner::

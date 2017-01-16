@@ -219,6 +219,8 @@ corto_void _test_fail(
         fprintf(stderr, "\b");
     }
 
+    corto_string lasterr = corto_lasterr() ? corto_strdup(corto_lasterr()) : NULL;
+
     corto_error("%sFAIL%s: %s%s%s:%s    ",
         CORTO_RED,
         CORTO_NORMAL,
@@ -227,9 +229,9 @@ corto_void _test_fail(
         CORTO_NORMAL,
         err ? err : "");
 
-    corto_string lasterr = corto_lasterr();
     if (lasterr) {
         fprintf(stderr, "   %sdetails%s: %s\n", CORTO_BOLD, CORTO_NORMAL, lasterr);
+        corto_dealloc(corto_lasterr());
     }
 
     /* Run teardown before exit, prevent infinite recursion if assert is called

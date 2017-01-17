@@ -131,8 +131,7 @@ corto_int16 _test_SuiteData_run(
             corto_call(corto_function(testcase), NULL, this);
         }
         if (!this->assertCount) {
-            test_fail(" not implemented");
-            goto error;
+            test_empty();
         }
 
         /* Teardown test */

@@ -72,6 +72,9 @@ CORTO_TEST_EXPORT corto_bool _test_assertstr(
     corto_uint32 __line);
 #define test_assertstr(s1, s2) _test_assertstr(s1, s2, #s1, #s2, __LINE__)
 
+CORTO_TEST_EXPORT corto_void _test_empty(void);
+#define test_empty() _test_empty()
+
 CORTO_TEST_EXPORT corto_void _test_fail(
     corto_string err);
 #define test_fail(err) _test_fail(err)

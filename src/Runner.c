@@ -13,19 +13,45 @@ void test_updateProgress(test_Runner this) {
     int i;
     char *str;
     if (test_CaseListSize(this->failures)) {
-        corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d",
-            this->name,
-            test_CaseListSize(this->successes),
-            CORTO_RED,
-            CORTO_NORMAL,
-            test_CaseListSize(this->failures));
+        if (test_CaseListSize(this->empty)) {
+            corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, %sEMPTY%s:%d",
+                this->name,
+                test_CaseListSize(this->successes),
+                CORTO_RED,
+                CORTO_NORMAL,
+                test_CaseListSize(this->failures),
+                CORTO_YELLOW,
+                CORTO_NORMAL,
+                test_CaseListSize(this->empty));
+            } else {
+                corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, EMPTY:%d",
+                    this->name,
+                    test_CaseListSize(this->successes),
+                    CORTO_RED,
+                    CORTO_NORMAL,
+                    test_CaseListSize(this->failures),
+                    test_CaseListSize(this->empty));
+            }
     } else {
-        corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d",
-            this->name,
-            CORTO_GREEN,
-            CORTO_NORMAL,
-            test_CaseListSize(this->successes),
-            test_CaseListSize(this->failures));
+        if (test_CaseListSize(this->empty)) {
+            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, %sEMPTY%s:%d",
+                this->name,
+                CORTO_GREEN,
+                CORTO_NORMAL,
+                test_CaseListSize(this->successes),
+                test_CaseListSize(this->failures),
+                CORTO_YELLOW,
+                CORTO_NORMAL,
+                test_CaseListSize(this->empty));
+        } else {
+            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, EMPTY:%d",
+                this->name,
+                CORTO_GREEN,
+                CORTO_NORMAL,
+                test_CaseListSize(this->successes),
+                test_CaseListSize(this->failures),
+                test_CaseListSize(this->empty));
+        }
     }
 
     for (i = 0; i < strlen(str) + 2 * 2; i++) {
@@ -219,7 +245,11 @@ corto_void _test_Runner_runTest(
                     test_command(cmd, this->lib, object));
             }
 
-            test_CaseListAppend(this->failures, object);
+            if (ret == 1) {
+                test_CaseListAppend(this->empty, object);
+            } else {
+                test_CaseListAppend(this->failures, object);
+            }
         } else {
             test_CaseListAppend(this->successes, object);
         }

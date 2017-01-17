@@ -200,6 +200,40 @@ corto_bool _test_assertstr(
 /* $end */
 }
 
+corto_void _test_empty(void)
+{
+/* $begin(corto/test/empty) */
+    int i;
+    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    if (!this) {
+        corto_error("test: test::fail called but no testsuite is running!");
+        abort();
+    }
+
+    for (i = 0; i < 255; i++) {
+        fprintf(stderr, "\b");
+    }
+
+    corto_string lasterr = corto_lasterr() ? corto_strdup(corto_lasterr()) : NULL;
+
+    corto_error("%sEMPTY%s: %s%s%s: missing implementation    ",
+        CORTO_YELLOW,
+        CORTO_NORMAL,
+        this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
+        this->tearingDown ? "/teardown" : test_id(NULL, this->testcase),
+        CORTO_NORMAL);
+
+    /* Run teardown before exit, prevent infinite recursion if assert is called
+     * in teardown. */
+    if (!this->tearingDown) {
+        this->tearingDown = TRUE;
+        test_SuiteData_teardown(this);
+    }
+
+    exit(1);
+/* $end */
+}
+
 corto_void _test_fail(
     corto_string err)
 {

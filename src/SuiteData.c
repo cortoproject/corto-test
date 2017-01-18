@@ -134,6 +134,13 @@ corto_int16 _test_SuiteData_run(
             test_empty();
         }
 
+        if (!corto_lasterrViewed()) {
+            fprintf(stderr, "\n");
+            corto_warning("%s: uncatched error: %s",
+              corto_fullpath(NULL, testcase),
+              corto_lasterr());
+        }
+
         /* Teardown test */
         if (!this->tearingDown) {
             this->tearingDown = TRUE;

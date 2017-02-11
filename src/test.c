@@ -216,7 +216,7 @@ corto_void _test_empty(void)
 
     corto_string lasterr = corto_lasterr() ? corto_strdup(corto_lasterr()) : NULL;
 
-    corto_error("%sEMPTY%s: %s%s%s: missing implementation    ",
+    corto_error("%sEMPTY%s: %s%s%s: missing implementation              ",
         CORTO_YELLOW,
         CORTO_NORMAL,
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
@@ -308,7 +308,7 @@ corto_void _test_setTimeout(
 /* $end */
 }
 
-int testMain(int argc, char* argv[]) {
+int testMain(int argc, char *argv[]) {
 /* $begin(main) */
     CORTO_UNUSED(argc);
     CORTO_UNUSED(argv);

@@ -170,6 +170,7 @@ corto_void _test_Runner_runTest(
                 (char*[]){
                     "corto",
                     "--mute",
+                    "-l",
                     this->lib,
                     testcaseId,
                     NULL
@@ -184,6 +185,7 @@ corto_void _test_Runner_runTest(
                         "valgrind",
                         "-q",
                         "corto",
+                        "-l",
                         this->lib,
                         testcaseId,
                         NULL
@@ -202,6 +204,7 @@ corto_void _test_Runner_runTest(
                         "-q",
                         "--tool=helgrind",
                         "corto",
+                        "-l",
                         this->lib,
                         testcaseId,
                         NULL

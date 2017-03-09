@@ -31,7 +31,7 @@ corto_string test_id(corto_id buffer, corto_object testcase) {
 corto_string test_command(corto_id buffer, corto_string lib, corto_object testcase) {
     corto_id testcaseId;
     test_id(testcaseId, testcase);
-    sprintf(buffer, "corto %s/%s %s", corto_cwd(), lib, testcaseId);
+    sprintf(buffer, "corto -l %s/%s %s", corto_cwd(), lib, testcaseId);
     return buffer;
 }
 

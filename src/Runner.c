@@ -152,6 +152,11 @@ corto_void _test_Runner_runTest(
         corto_int8 err = 0, ret = 0;
         corto_string ciEnv = corto_getenv("CI");
 
+        /* Set TARGET to temporary environment so tests can't contaminate the
+         * current environment */
+        char *oldenv = corto_getenv("CORTO_TARGET");
+        corto_setenv("CORTO_TARGET", "$HOME/.corto_tmp");
+
         test_id(testcaseId, object);
 
         {
@@ -280,6 +285,9 @@ corto_void _test_Runner_runTest(
                     testcaseId);
             }
         }
+
+        corto_rm(corto_getenv("CORTO_TARGET"));
+        corto_setenv("CORTO_TARGET", oldenv);
     }
 /* $end */
 }

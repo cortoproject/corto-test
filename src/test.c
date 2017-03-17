@@ -214,9 +214,7 @@ corto_void _test_empty(void)
         fprintf(stderr, "\b");
     }
 
-    corto_string lasterr = corto_lasterr() ? corto_strdup(corto_lasterr()) : NULL;
-
-    corto_error("%sEMPTY%s: %s%s%s: missing implementation              ",
+    printf("%sEMPTY%s: %s%s%s: missing implementation              \n",
         CORTO_YELLOW,
         CORTO_NORMAL,
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",

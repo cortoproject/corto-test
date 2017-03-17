@@ -34,7 +34,6 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
 /* Enter code that requires types here */
 /* $end */
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif

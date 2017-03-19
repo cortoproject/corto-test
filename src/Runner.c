@@ -80,6 +80,10 @@ corto_int16 _test_Runner_construct(
             corto_time start;
             corto_timeGet(&start);
 
+            /* Set TARGET in case this testcase is called directly */
+            char *oldenv = corto_getenv("CORTO_TARGET");
+            corto_setenv("CORTO_TARGET", "$HOME/.corto_tmp");
+
             corto_trace("test:   START %s", this->testcase);
             corto_type testClass = corto_parentof(testcase);
             test_SuiteData suite = test_SuiteData(corto_create(testClass));
@@ -105,6 +109,8 @@ corto_int16 _test_Runner_construct(
                 }
                 corto_trace("test:   DONE  %s (%ss)", this->testcase, timeFmt);
             }
+
+            corto_setenv("CORTO_TARGET", oldenv);
 
             corto_delete(suite);
         } else {
@@ -155,6 +161,7 @@ corto_void _test_Runner_runTest(
         /* Set TARGET to temporary environment so tests can't contaminate the
          * current environment */
         char *oldenv = corto_getenv("CORTO_TARGET");
+
         corto_setenv("CORTO_TARGET", "$HOME/.corto_tmp");
 
         test_id(testcaseId, object);
@@ -286,7 +293,9 @@ corto_void _test_Runner_runTest(
             }
         }
 
-        corto_rm(corto_getenv("CORTO_TARGET"));
+        if (corto_rm(corto_getenv("CORTO_TARGET"))) {
+            corto_lasterr(); /* Catch error */
+        }
         corto_setenv("CORTO_TARGET", oldenv);
     }
 /* $end */

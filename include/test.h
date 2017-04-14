@@ -9,8 +9,7 @@
 #include <corto/corto.h>
 #include <corto/corto.h>
 #include <corto/test/_project.h>
-#include <corto/core/c/c.h>
-#include <corto/lang/c/c.h>
+#include <corto/c/c.h>
 
 /* $header() */
 #ifdef __cplusplus
@@ -28,7 +27,7 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
 
 #include <corto/test/_type.h>
 #include <corto/test/_load.h>
-#include <corto/test/_api.h>
+#include <corto/test/c/_api.h>
 
 /* $body() */
 /* Enter code that requires types here */

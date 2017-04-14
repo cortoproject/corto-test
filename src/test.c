@@ -251,9 +251,17 @@ corto_void _test_fail(
         fprintf(stderr, "\b");
     }
 
+    for (i = 0; i < 80; i++) {
+        fprintf(stderr, " ");
+    }
+
+    for (i = 0; i < 80; i++) {
+        fprintf(stderr, "\b");
+    }
+
     corto_string lasterr = corto_lasterr() ? corto_strdup(corto_lasterr()) : NULL;
 
-    corto_error("%sFAIL%s: %s%s%s:%s    ",
+    fprintf(stderr, "%sFAIL%s: %s%s%s:%s\n",
         CORTO_RED,
         CORTO_NORMAL,
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",

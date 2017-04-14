@@ -1,6 +1,6 @@
 #package corto/test
 
-procedure Case: procedureKind::METHOD, base = method
+procedure Case: hasThis = true, base = method
 
 void fail(string err)
 void empty()
@@ -23,8 +23,8 @@ class SuiteData::
     member timeout: core/time, readonly
     member tearingDown: bool, readonly
     int16 construct()
-    void setup() virtual
-    void teardown() virtual
+    void setup() overridable
+    void teardown() overridable
     int16 run(test/Case testcase)
 
 class Suite{class, options={defaultType=member, defaultProcedureType=test/Case}}::

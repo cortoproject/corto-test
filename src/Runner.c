@@ -62,7 +62,7 @@ void test_updateProgress(test_Runner this) {
 }
 /* $end */
 
-corto_int16 _test_Runner_construct(
+int16_t _test_Runner_construct(
     test_Runner this)
 {
 /* $begin(corto/test/Runner/construct) */
@@ -131,7 +131,7 @@ error:
 /* $end */
 }
 
-corto_void _test_Runner_destruct(
+void _test_Runner_destruct(
     test_Runner this)
 {
 /* $begin(corto/test/Runner/destruct) */
@@ -143,7 +143,7 @@ corto_void _test_Runner_destruct(
 /* $end */
 }
 
-corto_void _test_Runner_runTest(
+void _test_Runner_runTest(
     test_Runner this,
     corto_eventMask event,
     corto_object object,

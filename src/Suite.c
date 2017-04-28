@@ -8,7 +8,7 @@
 
 #include <corto/test/test.h>
 
-corto_int16 _test_Suite_construct(
+int16_t _test_Suite_construct(
     test_Suite this)
 {
 /* $begin(corto/test/Suite/construct) */

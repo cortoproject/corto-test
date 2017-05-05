@@ -12,14 +12,14 @@ bool assertEqual(any a, any b, $a, $b, $__line)
 void setTimeout(core/time t)
 bool runslow()
 
-struct Result::
+struct Result:/
     member success: bool, readonly
     member errmsg: string
 
-class SuiteData::
+class SuiteData:/
     member testcase: test/Case, readonly
     member assertCount: uint32
-    member result: test::Result, readonly
+    member result: test/Result, readonly
     member timeout: core/time, readonly
     member tearingDown: bool, readonly
     int16 construct()
@@ -27,10 +27,10 @@ class SuiteData::
     void teardown() overridable
     int16 run(test/Case testcase)
 
-class Suite{class, options={defaultType=member, defaultProcedureType=test/Case}}::
+class Suite{class, options={defaultType=member, defaultProcedureType=test/Case}}:/
     int16 construct()
 
-class Runner::
+class Runner:/
     member name: string
     member lib: string
     member testcase: string

@@ -144,14 +144,11 @@ void _test_Runner_destruct(
 }
 
 void _test_Runner_runTest(
-    test_Runner this,
-    corto_eventMask event,
-    corto_object object,
-    corto_observer observer)
+    corto_observerEvent *e)
 {
 /* $begin(corto/test/Runner/runTest) */
-    CORTO_UNUSED(event);
-    CORTO_UNUSED(observer);
+    test_Runner this = e->instance;
+    corto_object object = e->data;
 
     if (corto_instanceof(corto_type(test_Case_o), object)) {
         corto_id testcaseId;

@@ -12,7 +12,7 @@ int16_t _test_Suite_construct(
     test_Suite this)
 {
 /* $begin(corto/test/Suite/construct) */
-    corto_setref(
+    corto_ptr_setref(
       &corto_interface(this)->base, corto_interface(test_SuiteData_o));
     return corto_class_construct(this);
 /* $end */

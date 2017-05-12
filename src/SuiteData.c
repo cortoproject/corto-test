@@ -99,7 +99,7 @@ int16_t _test_SuiteData_run(
     test_Case testcase)
 {
 /* $begin(corto/test/SuiteData/run) */
-    corto_setref(&this->testcase, testcase);
+    corto_ptr_setref(&this->testcase, testcase);
 
     if (testcase) {
         corto_attr attr;

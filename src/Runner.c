@@ -14,7 +14,7 @@ void test_updateProgress(test_Runner this) {
     char *str;
     if (test_CaseListSize(this->failures)) {
         if (test_CaseListSize(this->empty)) {
-            corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, %sEMPTY%s:%d",
+            corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, %sEMPTY%s:%d ",
                 this->name,
                 test_CaseListSize(this->successes),
                 CORTO_RED,
@@ -24,7 +24,7 @@ void test_updateProgress(test_Runner this) {
                 CORTO_NORMAL,
                 test_CaseListSize(this->empty));
             } else {
-                corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, EMPTY:%d",
+                corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, EMPTY:%d ",
                     this->name,
                     test_CaseListSize(this->successes),
                     CORTO_RED,
@@ -34,7 +34,7 @@ void test_updateProgress(test_Runner this) {
             }
     } else {
         if (test_CaseListSize(this->empty)) {
-            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, %sEMPTY%s:%d",
+            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, %sEMPTY%s:%d ",
                 this->name,
                 CORTO_GREEN,
                 CORTO_NORMAL,
@@ -44,7 +44,7 @@ void test_updateProgress(test_Runner this) {
                 CORTO_NORMAL,
                 test_CaseListSize(this->empty));
         } else {
-            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, EMPTY:%d",
+            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, EMPTY:%d ",
                 this->name,
                 CORTO_GREEN,
                 CORTO_NORMAL,
@@ -62,7 +62,7 @@ void test_updateProgress(test_Runner this) {
 }
 /* $end */
 
-corto_int16 _test_Runner_construct(
+int16_t _test_Runner_construct(
     test_Runner this)
 {
 /* $begin(corto/test/Runner/construct) */
@@ -131,7 +131,7 @@ error:
 /* $end */
 }
 
-corto_void _test_Runner_destruct(
+void _test_Runner_destruct(
     test_Runner this)
 {
 /* $begin(corto/test/Runner/destruct) */
@@ -143,15 +143,12 @@ corto_void _test_Runner_destruct(
 /* $end */
 }
 
-corto_void _test_Runner_runTest(
-    test_Runner this,
-    corto_eventMask event,
-    corto_object object,
-    corto_observer observer)
+void _test_Runner_runTest(
+    corto_observerEvent *e)
 {
 /* $begin(corto/test/Runner/runTest) */
-    CORTO_UNUSED(event);
-    CORTO_UNUSED(observer);
+    test_Runner this = e->instance;
+    corto_object object = e->data;
 
     if (corto_instanceof(corto_type(test_Case_o), object)) {
         corto_id testcaseId;
@@ -295,6 +292,7 @@ corto_void _test_Runner_runTest(
 
         if (corto_rm(corto_getenv("CORTO_TARGET"))) {
             corto_lasterr(); /* Catch error */
+            corto_seterr(NULL);
         }
         corto_setenv("CORTO_TARGET", oldenv);
     }

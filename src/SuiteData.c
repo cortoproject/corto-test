@@ -8,7 +8,7 @@
 
 #include <corto/test/test.h>
 
-corto_int16 _test_SuiteData_construct(
+int16_t _test_SuiteData_construct(
     test_SuiteData this)
 {
 /* $begin(corto/test/SuiteData/construct) */
@@ -94,12 +94,12 @@ void* test_guard(void *arg) {
     return NULL;
 }
 /* $end */
-corto_int16 _test_SuiteData_run(
+int16_t _test_SuiteData_run(
     test_SuiteData this,
     test_Case testcase)
 {
 /* $begin(corto/test/SuiteData/run) */
-    corto_setref(&this->testcase, testcase);
+    corto_ptr_setref(&this->testcase, testcase);
 
     if (testcase) {
         corto_attr attr;
@@ -166,7 +166,7 @@ error:
 /* $end */
 }
 
-corto_void _test_SuiteData_setup_v(
+void _test_SuiteData_setup_v(
     test_SuiteData this)
 {
 /* $begin(corto/test/SuiteData/setup) */
@@ -176,7 +176,7 @@ corto_void _test_SuiteData_setup_v(
 /* $end */
 }
 
-corto_void _test_SuiteData_teardown_v(
+void _test_SuiteData_teardown_v(
     test_SuiteData this)
 {
 /* $begin(corto/test/SuiteData/teardown) */

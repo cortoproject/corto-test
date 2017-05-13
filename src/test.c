@@ -37,10 +37,10 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
 
 /* $end */
 
-corto_bool _test_assert(
-    corto_bool condition,
+bool _test_assert(
+    bool condition,
     corto_string str_condition,
-    corto_uint32 __line)
+    uint32_t __line)
 {
 /* $begin(corto/test/assert) */
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
@@ -61,12 +61,12 @@ corto_bool _test_assert(
 /* $end */
 }
 
-corto_bool _test_assertEqual(
+bool _test_assertEqual(
     corto_any a,
     corto_any b,
     corto_string str_a,
     corto_string str_b,
-    corto_uint32 __line)
+    uint32_t __line)
 {
 /* $begin(corto/test/assertEqual) */
     corto_equalityKind eq;
@@ -78,7 +78,7 @@ corto_bool _test_assertEqual(
     }
     this->assertCount++;
 
-    eq = corto_comparea(a, b);
+    eq = corto_ptr_compare(a.value, a.type, b.value);
     if (eq != CORTO_EQ) {
         corto_asprintf(&assertMsg, "%d: assert(%s == %s)", __line, str_a, str_b);
         test_fail(assertMsg);
@@ -89,12 +89,12 @@ corto_bool _test_assertEqual(
 /* $end */
 }
 
-corto_bool _test_assertflt(
-    corto_float64 f1,
-    corto_float64 f2,
+bool _test_assertflt(
+    double f1,
+    double f2,
     corto_string str_f1,
     corto_string str_f2,
-    corto_uint32 __line)
+    uint32_t __line)
 {
 /* $begin(corto/test/assertflt) */
     char *assertMsg = NULL;
@@ -128,12 +128,12 @@ corto_bool _test_assertflt(
 /* $end */
 }
 
-corto_bool _test_assertint(
-    corto_uint64 i1,
-    corto_uint64 i2,
+bool _test_assertint(
+    uint64_t i1,
+    uint64_t i2,
     corto_string str_i1,
     corto_string str_i2,
-    corto_uint32 __line)
+    uint32_t __line)
 {
 /* $begin(corto/test/assertint) */
     char *assertMsg = NULL;
@@ -167,12 +167,12 @@ corto_bool _test_assertint(
 /* $end */
 }
 
-corto_bool _test_assertstr(
+bool _test_assertstr(
     corto_string s1,
     corto_string s2,
     corto_string str_s1,
     corto_string str_s2,
-    corto_uint32 __line)
+    uint32_t __line)
 {
 /* $begin(corto/test/assertstr) */
     char *assertMsg = NULL;
@@ -200,7 +200,7 @@ corto_bool _test_assertstr(
 /* $end */
 }
 
-corto_void _test_empty(void)
+void _test_empty(void)
 {
 /* $begin(corto/test/empty) */
     int i;
@@ -232,7 +232,7 @@ corto_void _test_empty(void)
 /* $end */
 }
 
-corto_void _test_fail(
+void _test_fail(
     corto_string err)
 {
 /* $begin(corto/test/fail) */
@@ -251,9 +251,17 @@ corto_void _test_fail(
         fprintf(stderr, "\b");
     }
 
+    for (i = 0; i < 80; i++) {
+        fprintf(stderr, " ");
+    }
+
+    for (i = 0; i < 80; i++) {
+        fprintf(stderr, "\b");
+    }
+
     corto_string lasterr = corto_lasterr() ? corto_strdup(corto_lasterr()) : NULL;
 
-    corto_error("%sFAIL%s: %s%s%s:%s    ",
+    fprintf(stderr, "%sFAIL%s: %s%s%s:%s\n",
         CORTO_RED,
         CORTO_NORMAL,
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
@@ -277,7 +285,7 @@ corto_void _test_fail(
 /* $end */
 }
 
-corto_bool _test_runslow(void)
+bool _test_runslow(void)
 {
 /* $begin(corto/test/runslow) */
     char *runslow = getenv("CORTO_TEST_RUNSLOW");
@@ -289,7 +297,7 @@ corto_bool _test_runslow(void)
 /* $end */
 }
 
-corto_void _test_setTimeout(
+void _test_setTimeout(
     corto_time *t)
 {
 /* $begin(corto/test/setTimeout) */

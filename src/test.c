@@ -1,14 +1,7 @@
-/* $CORTO_GENERATED
- *
- * test.c
- *
- * Only code written between the begin and end tags will be preserved
- * when the file is regenerated.
- */
+/* This is a managed file. Do not delete this comment. */
 
 #include <corto/test/test.h>
 
-/* $header() */
 corto_threadKey test_suiteKey;
 
 void test_erase(void) {
@@ -35,14 +28,12 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
     return buffer;
 }
 
-/* $end */
 
-bool _test_assert(
+bool test_assert(
     bool condition,
     corto_string str_condition,
     uint32_t __line)
 {
-/* $begin(corto/test/assert) */
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
@@ -58,17 +49,15 @@ bool _test_assert(
     }
 
     return !condition;
-/* $end */
 }
 
-bool _test_assertEqual(
+bool test_assertEqual(
     corto_any a,
     corto_any b,
     corto_string str_a,
     corto_string str_b,
     uint32_t __line)
 {
-/* $begin(corto/test/assertEqual) */
     corto_equalityKind eq;
     char *assertMsg = NULL;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
@@ -86,17 +75,15 @@ bool _test_assertEqual(
     }
 
     return (eq != CORTO_EQ);
-/* $end */
 }
 
-bool _test_assertflt(
+bool test_assertflt(
     double f1,
     double f2,
     corto_string str_f1,
     corto_string str_f2,
     uint32_t __line)
 {
-/* $begin(corto/test/assertflt) */
     char *assertMsg = NULL;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
@@ -125,17 +112,15 @@ bool _test_assertflt(
     }
 
     return f1 == f2;
-/* $end */
 }
 
-bool _test_assertint(
+bool test_assertint(
     uint64_t i1,
     uint64_t i2,
     corto_string str_i1,
     corto_string str_i2,
     uint32_t __line)
 {
-/* $begin(corto/test/assertint) */
     char *assertMsg = NULL;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
@@ -164,17 +149,15 @@ bool _test_assertint(
     }
 
     return i1 == i2;
-/* $end */
 }
 
-bool _test_assertstr(
+bool test_assertstr(
     corto_string s1,
     corto_string s2,
     corto_string str_s1,
     corto_string str_s2,
     uint32_t __line)
 {
-/* $begin(corto/test/assertstr) */
     char *assertMsg = NULL;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
@@ -197,12 +180,10 @@ bool _test_assertstr(
     }
 
     return TRUE;
-/* $end */
 }
 
-void _test_empty(void)
+void test_empty(void)
 {
-/* $begin(corto/test/empty) */
     int i;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
@@ -229,13 +210,11 @@ void _test_empty(void)
     }
 
     exit(1);
-/* $end */
 }
 
-void _test_fail(
+void test_fail(
     corto_string err)
 {
-/* $begin(corto/test/fail) */
     int i;
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
@@ -282,25 +261,21 @@ void _test_fail(
     }
 
     exit(-1);
-/* $end */
 }
 
-bool _test_runslow(void)
+bool test_runslow(void)
 {
-/* $begin(corto/test/runslow) */
     char *runslow = getenv("CORTO_TEST_RUNSLOW");
     if (runslow && !strcmp("CORTO_TEST_RUNSLOW", "TRUE")) {
         return TRUE;
     } else {
         return FALSE;
     }
-/* $end */
 }
 
-void _test_setTimeout(
+void test_setTimeout(
     corto_time *t)
 {
-/* $begin(corto/test/setTimeout) */
     test_SuiteData this = corto_threadTlsGet(test_suiteKey);
     if (!this) {
         corto_error("test: test::setTimeout called but no testsuite is running!");
@@ -311,16 +286,14 @@ void _test_setTimeout(
     this->timeout = *t;
     corto_unlock(this);
 
-/* $end */
 }
 
 int testMain(int argc, char *argv[]) {
-/* $begin(main) */
     CORTO_UNUSED(argc);
     CORTO_UNUSED(argv);
     if (corto_threadTlsKey(&test_suiteKey, NULL)) {
         return -1;
     }
     return 0;
-/* $end */
 }
+

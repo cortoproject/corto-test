@@ -1,14 +1,7 @@
-/* $CORTO_GENERATED
- *
- * Runner.c
- *
- * Only code written between the begin and end tags will be preserved
- * when the file is regenerated.
- */
+/* This is a managed file. Do not delete this comment. */
 
 #include <corto/test/test.h>
 
-/* $header() */
 void test_updateProgress(test_Runner this) {
     int i;
     char *str;
@@ -60,12 +53,10 @@ void test_updateProgress(test_Runner this) {
     printf("%s", str);
     fflush(stdout);
 }
-/* $end */
 
-int16_t _test_Runner_construct(
+int16_t test_Runner_construct(
     test_Runner this)
 {
-/* $begin(corto/test/Runner/construct) */
     corto_object testroot = corto_lookup(root_o, "test");
     if (!testroot) {
         corto_seterr("test: /test not found");
@@ -128,25 +119,21 @@ int16_t _test_Runner_construct(
     return 0;
 error:
     return -1;
-/* $end */
 }
 
-void _test_Runner_destruct(
+void test_Runner_destruct(
     test_Runner this)
 {
-/* $begin(corto/test/Runner/destruct) */
     if (!this->testcase) {
         test_updateProgress(this);
         printf("\n");
         corto_observer_unobserve(test_Runner_runTest_o, this, root_o);
     }
-/* $end */
 }
 
-void _test_Runner_runTest(
+void test_Runner_runTest(
     corto_observerEvent *e)
 {
-/* $begin(corto/test/Runner/runTest) */
     test_Runner this = e->instance;
     corto_object object = e->data;
 
@@ -296,5 +283,5 @@ void _test_Runner_runTest(
         }
         corto_setenv("CORTO_TARGET", oldenv);
     }
-/* $end */
 }
+

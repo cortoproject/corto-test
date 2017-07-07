@@ -1,25 +1,16 @@
-/* $CORTO_GENERATED
- *
- * SuiteData.c
- *
- * Only code written between the begin and end tags will be preserved
- * when the file is regenerated.
- */
+/* This is a managed file. Do not delete this comment. */
 
 #include <corto/test/test.h>
-
-int16_t _test_SuiteData_construct(
+int16_t test_SuiteData_construct(
     test_SuiteData this)
 {
-/* $begin(corto/test/SuiteData/construct) */
     CORTO_UNUSED(this);
     this->timeout.sec = 5;
     this->timeout.nanosec = 0;
     return 0;
-/* $end */
 }
 
-/* $header(corto/test/SuiteData/run) */
+
 typedef struct test_guard_t {
     test_SuiteData suite;
     corto_object testcase;
@@ -93,12 +84,11 @@ void* test_guard(void *arg) {
 
     return NULL;
 }
-/* $end */
-int16_t _test_SuiteData_run(
+
+int16_t test_SuiteData_run(
     test_SuiteData this,
     test_Case testcase)
 {
-/* $begin(corto/test/SuiteData/run) */
     corto_ptr_setref(&this->testcase, testcase);
 
     if (testcase) {
@@ -163,25 +153,21 @@ int16_t _test_SuiteData_run(
     return 0;
 error:
     return -1;
-/* $end */
 }
 
-void _test_SuiteData_setup_v(
+void test_SuiteData_setup_v(
     test_SuiteData this)
 {
-/* $begin(corto/test/SuiteData/setup) */
 
 	CORTO_UNUSED(this);
 
-/* $end */
 }
 
-void _test_SuiteData_teardown_v(
+void test_SuiteData_teardown_v(
     test_SuiteData this)
 {
-/* $begin(corto/test/SuiteData/teardown) */
 
 	CORTO_UNUSED(this);
 
-/* $end */
 }
+

@@ -99,7 +99,7 @@ int16_t test_Runner_construct(
                         break;
                 }
 
-                if (!stricmp(corto_getenv("CORTO_TEST_BY_ID"), "true")) {
+                if (corto_getenv("CORTO_TEST_BY_ID") && !stricmp(corto_getenv("CORTO_TEST_BY_ID"), "true")) {
                     corto_id cmd;
                     fprintf(stderr, "RUN %s\n",
                         test_command(cmd, this->lib, testcase));

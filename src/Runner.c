@@ -98,7 +98,12 @@ int16_t test_Runner_construct(
                     else
                         break;
                 }
-                corto_trace("test:   DONE  %s (%ss)", this->testcase, timeFmt);
+
+                if (!stricmp(corto_getenv("CORTO_TEST_BY_ID"), "true")) {
+                    corto_info("test:   DONE  %s (%ss)", this->testcase, timeFmt);
+                } else {
+                    corto_trace("test:   DONE  %s (%ss)", this->testcase, timeFmt);                    
+                }
             }
 
             corto_setenv("CORTO_TARGET", oldenv);

@@ -22,9 +22,11 @@ corto_string test_id(corto_id buffer, corto_object testcase) {
 }
 
 corto_string test_command(corto_id buffer, corto_string lib, corto_object testcase) {
-    corto_id testcaseId;
+    corto_id testcaseId, library;
     test_id(testcaseId, testcase);
-    sprintf(buffer, "corto -l %s/%s %s", corto_cwd(), lib, testcaseId);
+    sprintf(library, "%s/%s", corto_cwd(), lib);
+    corto_cleanpath(library, library);
+    sprintf(buffer, "corto -l %s %s", library, testcaseId);
     return buffer;
 }
 

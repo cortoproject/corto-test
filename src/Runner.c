@@ -100,10 +100,12 @@ int16_t test_Runner_construct(
                 }
 
                 if (!stricmp(corto_getenv("CORTO_TEST_BY_ID"), "true")) {
-                    corto_info("test:   DONE  %s (%ss)", this->testcase, timeFmt);
-                } else {
-                    corto_trace("test:   DONE  %s (%ss)", this->testcase, timeFmt);                    
+                    corto_id cmd;
+                    fprintf(stderr, "RUN %s\n",
+                        test_command(cmd, this->lib, testcase));
                 }
+
+                corto_trace("test:   DONE  %s (%ss)", this->testcase, timeFmt);                    
             }
 
             corto_setenv("CORTO_TARGET", oldenv);

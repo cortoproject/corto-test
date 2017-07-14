@@ -79,6 +79,12 @@ int16_t test_Runner_construct(
             corto_type testClass = corto_parentof(testcase);
             test_SuiteData suite = test_SuiteData(corto_create(testClass));
 
+            if (corto_getenv("CORTO_TEST_BY_ID") && !stricmp(corto_getenv("CORTO_TEST_BY_ID"), "true")) {
+                corto_id cmd;
+                fprintf(stderr, "RUN %s\n",
+                    test_command(cmd, this->lib, testcase));
+            }
+
             if (test_SuiteData_run(suite, testcase)) {
                 corto_error("test: failed to define test suite");
                 test_CaseListAppend(this->failures, testcase);
@@ -97,12 +103,6 @@ int16_t test_Runner_construct(
                         ptr[1] = '\0';
                     else
                         break;
-                }
-
-                if (corto_getenv("CORTO_TEST_BY_ID") && !stricmp(corto_getenv("CORTO_TEST_BY_ID"), "true")) {
-                    corto_id cmd;
-                    fprintf(stderr, "RUN %s\n",
-                        test_command(cmd, this->lib, testcase));
                 }
 
                 corto_trace("test:   DONE  %s (%ss)", this->testcase, timeFmt);                    

@@ -1,4 +1,4 @@
-#package corto/test
+in package corto/test
 
 procedure Case: hasThis = true, base = method
 

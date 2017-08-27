@@ -41,4 +41,4 @@ class Runner:/
     member timer: core/time, readonly
     int16 construct()
     void destruct()
-    observer runTest: on_define | on_tree
+    observer runTest: define | on_tree

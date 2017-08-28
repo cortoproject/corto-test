@@ -5,8 +5,15 @@ int16_t test_SuiteData_construct(
     test_SuiteData this)
 {
     CORTO_UNUSED(this);
-    this->timeout.sec = 5;
-    this->timeout.nanosec = 0;
+
+    if (corto_getenv("CI")) {
+        /* Use less strict timings in less predictable CI environments */
+        this->timeout.sec = 30;
+        this->timeout.nanosec = 0;
+    } else {
+        this->timeout.sec = 5;
+        this->timeout.nanosec = 0;
+    }
     return 0;
 }
 

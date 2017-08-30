@@ -286,6 +286,13 @@ void test_setTimeout(
 
     corto_lock(this);
     this->timeout = *t;
+
+    /* When running in CI, give tests extra time */
+    if (corto_getenv("CI")) {
+        t->sec *= 6;
+        t->nanosec *= 6;
+    }
+
     corto_unlock(this);
 
 }

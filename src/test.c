@@ -44,8 +44,7 @@ bool test_assert(
     this->assertCount++;
 
     if (!condition) {
-        char *assertMsg = NULL;
-        corto_asprintf(&assertMsg, "%d: assert(%s)", __line, str_condition);
+        char *assertMsg = corto_asprintf("%d: assert(%s)", __line, str_condition);
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
     }
@@ -71,7 +70,7 @@ bool test_assertEqual(
 
     eq = corto_ptr_compare(a.value, a.type, b.value);
     if (eq != CORTO_EQ) {
-        corto_asprintf(&assertMsg, "%d: assert(%s == %s)", __line, str_a, str_b);
+        assertMsg = corto_asprintf("%d: assert(%s == %s)", __line, str_a, str_b);
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
     }
@@ -99,14 +98,14 @@ bool test_assertflt(
         if (isdigit(*str_f1) || (*str_f1 == '-')) {
             si1 = strdup(str_f1);
         } else {
-            corto_asprintf(&si1, "%s (%f)", str_f1, f1);
+            si1 = corto_asprintf("%s (%f)", str_f1, f1);
         }
         if (isdigit(*str_f2) || (*str_f2 == '-')) {
             si2 = strdup(str_f2);
         } else {
-            corto_asprintf(&si2, "%s (%f)", str_f2, f2);
+            si2 = corto_asprintf("%s (%f)", str_f2, f2);
         }
-        corto_asprintf(&assertMsg, "%d: %s != %s", __line, si1, si2);
+        assertMsg = corto_asprintf("%d: %s != %s", __line, si1, si2);
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
         corto_dealloc(si1);
@@ -136,14 +135,14 @@ bool test_assertint(
         if (isdigit(*str_i1) || (*str_i1 == '-')) {
             si1 = strdup(str_i1);
         } else {
-            corto_asprintf(&si1, "%s (%lld)", str_i1, i1);
+            si1 = corto_asprintf("%s (%lld)", str_i1, i1);
         }
         if (isdigit(*str_i2) || (*str_i2 == '-')) {
             si2 = strdup(str_i2);
         } else {
-            corto_asprintf(&si2, "%s (%lld)", str_i2, i2);
+            si2 = corto_asprintf("%s (%lld)", str_i2, i2);
         }
-        corto_asprintf(&assertMsg, "%d: %s != %s", __line, si1, si2);
+        assertMsg = corto_asprintf("%d: %s != %s", __line, si1, si2);
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
         corto_dealloc(si1);
@@ -171,9 +170,9 @@ bool test_assertstr(
     if (s1 || s2) {
         if ((!s1 && s2) || (s1 && !s2) || strcmp(s1, s2)) {
             if ((s1 && strchr(s1, '\n')) || (s2 && strchr(s2, '\n'))) {
-                corto_asprintf(&assertMsg, "%d: \n%s:\n%s\n%s:\n%s\n", __line, str_s1, s1, str_s2, s2);
+                assertMsg = corto_asprintf("%d: \n%s:\n%s\n%s:\n%s\n", __line, str_s1, s1, str_s2, s2);
             } else {
-                corto_asprintf(&assertMsg, "%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
+                assertMsg = corto_asprintf("%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
             }
             test_fail(assertMsg);
             corto_dealloc(assertMsg);

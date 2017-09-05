@@ -7,7 +7,7 @@ void test_updateProgress(test_Runner this) {
     char *str;
     if (test_CaseListSize(this->failures)) {
         if (test_CaseListSize(this->empty)) {
-            corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, %sEMPTY%s:%d ",
+            str = corto_asprintf("%s: PASS:%d, %sFAIL%s:%d, %sEMPTY%s:%d ",
                 this->name,
                 test_CaseListSize(this->successes),
                 CORTO_RED,
@@ -17,7 +17,7 @@ void test_updateProgress(test_Runner this) {
                 CORTO_NORMAL,
                 test_CaseListSize(this->empty));
             } else {
-                corto_asprintf(&str, "%s: PASS:%d, %sFAIL%s:%d, EMPTY:%d ",
+                str = corto_asprintf("%s: PASS:%d, %sFAIL%s:%d, EMPTY:%d ",
                     this->name,
                     test_CaseListSize(this->successes),
                     CORTO_RED,
@@ -27,7 +27,7 @@ void test_updateProgress(test_Runner this) {
             }
     } else {
         if (test_CaseListSize(this->empty)) {
-            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, %sEMPTY%s:%d ",
+            str = corto_asprintf("%s: %sPASS%s:%d, FAIL:%d, %sEMPTY%s:%d ",
                 this->name,
                 CORTO_GREEN,
                 CORTO_NORMAL,
@@ -37,7 +37,7 @@ void test_updateProgress(test_Runner this) {
                 CORTO_NORMAL,
                 test_CaseListSize(this->empty));
         } else {
-            corto_asprintf(&str, "%s: %sPASS%s:%d, FAIL:%d, EMPTY:%d ",
+            str = corto_asprintf("%s: %sPASS%s:%d, FAIL:%d, EMPTY:%d ",
                 this->name,
                 CORTO_GREEN,
                 CORTO_NORMAL,

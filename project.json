@@ -2,6 +2,7 @@
   "id" : "corto/test",
   "type" : "package",
   "value" : {
+    "author": "Sander Mertens, Johnny Lee",
     "description" : "Test framework for corto projects",
     "version" : "1.0.0",
     "cflags" : ["-Wunused-parameter"]

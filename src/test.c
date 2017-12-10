@@ -1,19 +1,20 @@
 /* This is a managed file. Do not delete this comment. */
 
 #include <corto/test/test.h>
-
-corto_threadKey test_suiteKey;
-
+corto_tls test_suiteKey;
 void test_erase(void) {
     int i;
     for (i = 0; i < 255; i++) {
         fprintf(stderr, "\b");
     }
+
 }
+
+#define FIND(parent, id) corto(parent, id, NULL, NULL, NULL, NULL, -1, 0)
 
 corto_string test_id(corto_id buffer, corto_object testcase) {
     corto_string result = NULL;
-    corto_object testroot = corto_lookup(root_o, "test");
+    corto_object testroot = FIND(root_o, "test");
     corto_assert(testroot != NULL, "testroot disappeared?");
     result = corto_path(buffer, testroot, testcase, "/");
     *(char*)strchr(result, '(') = '\0';
@@ -25,24 +26,23 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
     corto_id testcaseId, library;
     test_id(testcaseId, testcase);
     sprintf(library, "%s/%s", corto_cwd(), lib);
-    corto_cleanpath(library, library);
+    corto_path_clean(library, library);
     sprintf(buffer, "corto -l %s %s", library, testcaseId);
     return buffer;
 }
-
 
 bool test_assert(
     bool condition,
     corto_string str_condition,
     uint32_t __line)
 {
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
     }
-    this->assertCount++;
 
+    this->assertCount++;
     if (!condition) {
         char *assertMsg = corto_asprintf("%d: assert(%s)", __line, str_condition);
         test_fail(assertMsg);
@@ -61,13 +61,13 @@ bool test_assertEqual(
 {
     corto_equalityKind eq;
     char *assertMsg = NULL;
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
     }
-    this->assertCount++;
 
+    this->assertCount++;
     eq = corto_ptr_compare(a.value, a.type, b.value);
     if (eq != CORTO_EQ) {
         assertMsg = corto_asprintf("%d: assert(%s == %s)", __line, str_a, str_b);
@@ -86,13 +86,13 @@ bool test_assertflt(
     uint32_t __line)
 {
     char *assertMsg = NULL;
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
     }
-    this->assertCount++;
 
+    this->assertCount++;
     if (f1 != f2) {
         char *si1, *si2;
         if (isdigit(*str_f1) || (*str_f1 == '-')) {
@@ -100,11 +100,13 @@ bool test_assertflt(
         } else {
             si1 = corto_asprintf("%s (%f)", str_f1, f1);
         }
+
         if (isdigit(*str_f2) || (*str_f2 == '-')) {
             si2 = strdup(str_f2);
         } else {
             si2 = corto_asprintf("%s (%f)", str_f2, f2);
         }
+
         assertMsg = corto_asprintf("%d: %s != %s", __line, si1, si2);
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
@@ -123,13 +125,13 @@ bool test_assertint(
     uint32_t __line)
 {
     char *assertMsg = NULL;
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
     }
-    this->assertCount++;
 
+    this->assertCount++;
     if (i1 != i2) {
         char *si1, *si2;
         if (isdigit(*str_i1) || (*str_i1 == '-')) {
@@ -137,11 +139,13 @@ bool test_assertint(
         } else {
             si1 = corto_asprintf("%s (%lld)", str_i1, i1);
         }
+
         if (isdigit(*str_i2) || (*str_i2 == '-')) {
             si2 = strdup(str_i2);
         } else {
             si2 = corto_asprintf("%s (%lld)", str_i2, i2);
         }
+
         assertMsg = corto_asprintf("%d: %s != %s", __line, si1, si2);
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
@@ -160,13 +164,13 @@ bool test_assertstr(
     uint32_t __line)
 {
     char *assertMsg = NULL;
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
     }
-    this->assertCount++;
 
+    this->assertCount++;
     if (s1 || s2) {
         if ((!s1 && s2) || (s1 && !s2) || strcmp(s1, s2)) {
             if ((s1 && strchr(s1, '\n')) || (s2 && strchr(s2, '\n'))) {
@@ -174,10 +178,12 @@ bool test_assertstr(
             } else {
                 assertMsg = corto_asprintf("%d: %s (\"%s\") != %s (\"%s\")", __line, str_s1, s1, str_s2, s2);
             }
+
             test_fail(assertMsg);
             corto_dealloc(assertMsg);
             return FALSE;
         }
+
     }
 
     return TRUE;
@@ -185,23 +191,15 @@ bool test_assertstr(
 
 void test_empty(void)
 {
-    int i;
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
     }
 
-    for (i = 0; i < 255; i++) {
-        fprintf(stderr, "\b");
-    }
-
-    printf("%sEMPTY%s: %s%s%s: missing implementation              \n",
-        CORTO_YELLOW,
-        CORTO_NORMAL,
+    corto_log("#[yellow]EMPTY#[normal]: %s%s: missing implementation\n",
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
-        this->tearingDown ? "/teardown" : test_id(NULL, this->testcase),
-        CORTO_NORMAL);
+        this->tearingDown ? "/teardown" : test_id(NULL, this->testcase));
 
     /* Run teardown before exit, prevent infinite recursion if assert is called
      * in teardown. */
@@ -217,11 +215,12 @@ void test_fail(
     corto_string err)
 {
     int i;
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
     }
+
     if (this->result.success) {
         this->result.errmsg = corto_strdup(err);
         this->result.success = FALSE;
@@ -239,20 +238,12 @@ void test_fail(
         fprintf(stderr, "\b");
     }
 
-    corto_string lasterr = corto_lasterr() ? corto_strdup(corto_lasterr()) : NULL;
+    corto_raise();
 
-    fprintf(stderr, "%sFAIL%s: %s%s%s:%s\n",
-        CORTO_RED,
-        CORTO_NORMAL,
+    corto_log("#[red]FAIL#[normal]: %s%s:%s\n",
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
         this->tearingDown ? "/teardown" : test_id(NULL, this->testcase),
-        CORTO_NORMAL,
         err ? err : "");
-
-    if (lasterr) {
-        fprintf(stderr, "   %sdetails%s: %s\n", CORTO_BOLD, CORTO_NORMAL, lasterr);
-        corto_dealloc(corto_lasterr());
-    }
 
     /* Run teardown before exit, prevent infinite recursion if assert is called
      * in teardown. */
@@ -272,12 +263,13 @@ bool test_runslow(void)
     } else {
         return FALSE;
     }
+
 }
 
 void test_setTimeout(
     corto_time *t)
 {
-    test_SuiteData this = corto_threadTlsGet(test_suiteKey);
+    test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
         corto_error("test: test::setTimeout called but no testsuite is running!");
         abort();
@@ -285,7 +277,6 @@ void test_setTimeout(
 
     corto_lock(this);
     this->timeout = *t;
-
     /* When running in CI, give tests extra time */
     if (corto_getenv("CI")) {
         t->sec *= 6;
@@ -293,15 +284,14 @@ void test_setTimeout(
     }
 
     corto_unlock(this);
-
 }
 
-int testMain(int argc, char *argv[]) {
+int cortomain(int argc, char *argv[]) {
     CORTO_UNUSED(argc);
     CORTO_UNUSED(argv);
-    if (corto_threadTlsKey(&test_suiteKey, NULL)) {
+    if (corto_tls_new(&test_suiteKey, NULL)) {
         return -1;
     }
+
     return 0;
 }
-

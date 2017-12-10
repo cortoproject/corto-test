@@ -1,10 +1,12 @@
 {
-  "id" : "corto/test",
-  "type" : "package",
-  "value" : {
-    "author": "Sander Mertens, Johnny Lee",
-    "description" : "Test framework for corto projects",
-    "version" : "1.0.0",
-    "cflags" : ["-Wunused-parameter"]
-  }
+    "id": "corto/test",
+    "type": "package",
+    "value": {
+        "author": "Jonny Lee Othon, Sander Mertens",
+        "description": "Test framework for corto",
+        "version": "1.0.0",
+        "organization": "cortoproject",
+        "repository": "https://github.com/cortoproject/test",
+        "license": "MIT"
+    }
 }

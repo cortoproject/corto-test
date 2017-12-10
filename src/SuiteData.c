@@ -1,5 +1,7 @@
 /* This is a managed file. Do not delete this comment. */
 
+#define FIND(parent, id) corto(parent, id, NULL, NULL, NULL, NULL, -1, 0)
+
 #include <corto/test/test.h>
 int16_t test_SuiteData_construct(
     test_SuiteData this)
@@ -29,21 +31,22 @@ void* test_guard(void *arg) {
     corto_time start;
     corto_bool quit = 0;
 
-    corto_timeGet(&start);
+    corto_time_get(&start);
 
     corto_lock(data->suite);
     corto_time timeout = data->suite->timeout;
     corto_unlock(data->suite);
 
-    corto_time timeExpire = corto_timeAdd(start, timeout);
+    corto_time timeExpire = corto_time_add(start, timeout);
+    struct timespec tsExpire = {timeExpire.sec, timeExpire.nanosec};
 
     /* Testcase may change timeout, so after each timeout verify whether timeout
      * has changed, and whether a new wait is required */
     do {
-        if (corto_mutexLockTimed(&data->m, timeExpire) == ETIMEDOUT) {
+        if (corto_mutex_lockTimed(&data->m, tsExpire) == ETIMEDOUT) {
             corto_time newTimeout, now;
 
-            corto_timeGet(&now);
+            corto_time_get(&now);
 
             /* Obtain (new) timeout */
             corto_lock(data->suite);
@@ -55,7 +58,7 @@ void* test_guard(void *arg) {
 
                 /* Calculate new expiry time */
                 timeout = newTimeout;
-                timeExpire = corto_timeAdd(start, timeout);
+                timeExpire = corto_time_add(start, timeout);
 
                 /* If time has already expired, quit */
                 if (corto_time_compare(now, timeExpire) == 1) {
@@ -65,7 +68,7 @@ void* test_guard(void *arg) {
                 quit = 1;
             }
         } else {
-            corto_mutexUnlock(&data->m);
+            corto_mutex_unlock(&data->m);
             break; /* Testcase finished */
         }
     } while (!quit);
@@ -80,7 +83,7 @@ void* test_guard(void *arg) {
             else
                 break;
         }
-        corto_object testroot = corto_lookup(root_o, "test");
+        corto_object testroot = FIND(root_o, "test");
         corto_assert(testroot != NULL, "testroot disappeared?");
         corto_error("test: testcase '%s' timed out after %ss",
           test_id(NULL, data->testcase),
@@ -102,12 +105,12 @@ int16_t test_SuiteData_run(
         corto_attr attr;
 
         this->result.success = TRUE;
-        extern corto_threadKey test_suiteKey;
+        extern corto_tls test_suiteKey;
         corto_thread guard = 0;
         test_guard_t *data = NULL;
 
         /* Setup test */
-        corto_threadTlsSet(test_suiteKey, this);
+        corto_tls_set(test_suiteKey, this);
         attr = corto_setAttr(CORTO_ATTR_DEFAULT);
         test_SuiteData_setup(this);
 
@@ -116,9 +119,9 @@ int16_t test_SuiteData_run(
             data = corto_alloc(sizeof(test_guard_t));
             data->suite = this;
             data->testcase = testcase;
-            corto_mutexNew(&data->m);
-            corto_mutexLock(&data->m);
-            guard = corto_threadNew(test_guard, data);
+            corto_mutex_new(&data->m);
+            corto_mutex_lock(&data->m);
+            guard = corto_thread_new(test_guard, data);
         }
 
         this->assertCount = 0;
@@ -131,29 +134,22 @@ int16_t test_SuiteData_run(
             test_empty();
         }
 
-        if (!corto_lasterrViewed()) {
-            fprintf(stderr, "\n");
-            corto_warning("%s: uncatched error: %s",
-              corto_fullpath(NULL, testcase),
-              corto_lasterr());
-        }
-
         /* Teardown test */
         if (!this->tearingDown) {
             this->tearingDown = TRUE;
             test_SuiteData_teardown(this);
         }
-        corto_threadTlsSet(test_suiteKey, NULL);
+        corto_tls_set(test_suiteKey, NULL);
         corto_setAttr(attr);
 
         /* Stop termination guard */
         if (guard) {
-            corto_mutexUnlock(&data->m);
-            corto_threadJoin(guard, NULL);
+            corto_mutex_unlock(&data->m);
+            corto_thread_join(guard, NULL);
             corto_dealloc(data);
         }
     } else {
-        corto_seterr("no test provided for suite '%s'", corto_idof(this));
+        corto_throw("no test provided for suite '%s'", corto_idof(this));
         goto error;
     }
 
@@ -177,4 +173,3 @@ void test_SuiteData_teardown_v(
 	CORTO_UNUSED(this);
 
 }
-

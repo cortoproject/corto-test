@@ -8,4 +8,3 @@ int16_t test_Suite_construct(
       &corto_interface(this)->base, corto_interface(test_SuiteData_o));
     return corto_class_construct(this);
 }
-

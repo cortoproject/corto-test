@@ -111,7 +111,7 @@ int16_t test_SuiteData_run(
 
         /* Setup test */
         corto_tls_set(test_suiteKey, this);
-        attr = corto_setAttr(CORTO_ATTR_DEFAULT);
+        attr = corto_set_attr(CORTO_ATTR_DEFAULT);
         test_SuiteData_setup(this);
 
         /* Setup termination guard */
@@ -140,7 +140,7 @@ int16_t test_SuiteData_run(
             test_SuiteData_teardown(this);
         }
         corto_tls_set(test_suiteKey, NULL);
-        corto_setAttr(attr);
+        corto_set_attr(attr);
 
         /* Stop termination guard */
         if (guard) {

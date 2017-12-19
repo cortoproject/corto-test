@@ -11,7 +11,6 @@ void test_erase(void) {
 }
 
 #define FIND(parent, id) corto(parent, id, NULL, NULL, NULL, NULL, -1, 0)
-
 corto_string test_id(corto_id buffer, corto_object testcase) {
     corto_string result = NULL;
     corto_object testroot = FIND(root_o, "test");
@@ -33,7 +32,7 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
 
 bool test_assert(
     bool condition,
-    corto_string str_condition,
+    const char *str_condition,
     uint32_t __line)
 {
     test_SuiteData this = corto_tls_get(test_suiteKey);
@@ -55,8 +54,8 @@ bool test_assert(
 bool test_assertEqual(
     corto_any a,
     corto_any b,
-    corto_string str_a,
-    corto_string str_b,
+    const char *str_a,
+    const char *str_b,
     uint32_t __line)
 {
     corto_equalityKind eq;
@@ -81,8 +80,8 @@ bool test_assertEqual(
 bool test_assertflt(
     double f1,
     double f2,
-    corto_string str_f1,
-    corto_string str_f2,
+    const char *str_f1,
+    const char *str_f2,
     uint32_t __line)
 {
     char *assertMsg = NULL;
@@ -120,8 +119,8 @@ bool test_assertflt(
 bool test_assertint(
     uint64_t i1,
     uint64_t i2,
-    corto_string str_i1,
-    corto_string str_i2,
+    const char *str_i1,
+    const char *str_i2,
     uint32_t __line)
 {
     char *assertMsg = NULL;
@@ -157,10 +156,10 @@ bool test_assertint(
 }
 
 bool test_assertstr(
-    corto_string s1,
-    corto_string s2,
-    corto_string str_s1,
-    corto_string str_s2,
+    const char *s1,
+    const char *s2,
+    const char *str_s1,
+    const char *str_s2,
     uint32_t __line)
 {
     char *assertMsg = NULL;
@@ -200,7 +199,6 @@ void test_empty(void)
     corto_log("#[yellow]EMPTY#[normal]: %s%s: missing implementation\n",
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
         this->tearingDown ? "/teardown" : test_id(NULL, this->testcase));
-
     /* Run teardown before exit, prevent infinite recursion if assert is called
      * in teardown. */
     if (!this->tearingDown) {
@@ -212,7 +210,7 @@ void test_empty(void)
 }
 
 void test_fail(
-    corto_string err)
+    const char *err)
 {
     int i;
     test_SuiteData this = corto_tls_get(test_suiteKey);
@@ -239,12 +237,10 @@ void test_fail(
     }
 
     corto_raise();
-
     corto_log("#[red]FAIL#[normal]: %s%s:%s\n",
         this->tearingDown ? corto_idof(corto_parentof(this->testcase)) : "",
         this->tearingDown ? "/teardown" : test_id(NULL, this->testcase),
         err ? err : "");
-
     /* Run teardown before exit, prevent infinite recursion if assert is called
      * in teardown. */
     if (!this->tearingDown) {
@@ -295,3 +291,4 @@ int cortomain(int argc, char *argv[]) {
 
     return 0;
 }
+

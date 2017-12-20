@@ -10,7 +10,7 @@ void test_erase(void) {
 
 }
 
-#define FIND(parent, id) corto(parent, id, NULL, NULL, NULL, NULL, -1, 0)
+#define FIND(p, i) corto(CORTO_LOOKUP, {.parent=p, .id=i})
 corto_string test_id(corto_id buffer, corto_object testcase) {
     corto_string result = NULL;
     corto_object testroot = FIND(root_o, "test");
@@ -291,4 +291,3 @@ int cortomain(int argc, char *argv[]) {
 
     return 0;
 }
-

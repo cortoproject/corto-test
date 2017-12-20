@@ -1,6 +1,6 @@
 /* This is a managed file. Do not delete this comment. */
 
-#define FIND(parent, id) corto(parent, id, NULL, NULL, NULL, NULL, -1, 0)
+#define FIND(p, i) corto(CORTO_LOOKUP, {.parent=p, .id=i})
 
 #include <corto/test/test.h>
 int16_t test_SuiteData_construct(
@@ -128,7 +128,7 @@ int16_t test_SuiteData_run(
         if (corto_function(testcase)->kind == CORTO_PROCEDURE_CDECL) {
             ((void(*)(corto_object))corto_function(testcase)->fptr)(this);
         } else {
-            corto_call(corto_function(testcase), NULL, this);
+            corto_invoke(corto_function(testcase), NULL, this);
         }
         if (!this->assertCount) {
             test_empty();

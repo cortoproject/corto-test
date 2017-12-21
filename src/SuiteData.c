@@ -99,7 +99,7 @@ int16_t test_SuiteData_run(
     test_SuiteData this,
     test_Case testcase)
 {
-    corto_ptr_setref(&this->testcase, testcase);
+    corto_set_ref(&this->testcase, testcase);
 
     if (testcase) {
         corto_attr attr;

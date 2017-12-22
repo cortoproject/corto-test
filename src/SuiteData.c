@@ -1,6 +1,6 @@
 /* This is a managed file. Do not delete this comment. */
 
-#define FIND(parent, id) corto(parent, id, NULL, NULL, NULL, NULL, -1, 0)
+#define FIND(p, i) corto(CORTO_LOOKUP, {.parent=p, .id=i})
 
 #include <corto/test/test.h>
 int16_t test_SuiteData_construct(
@@ -99,7 +99,7 @@ int16_t test_SuiteData_run(
     test_SuiteData this,
     test_Case testcase)
 {
-    corto_ptr_setref(&this->testcase, testcase);
+    corto_set_ref(&this->testcase, testcase);
 
     if (testcase) {
         corto_attr attr;
@@ -111,7 +111,7 @@ int16_t test_SuiteData_run(
 
         /* Setup test */
         corto_tls_set(test_suiteKey, this);
-        attr = corto_setAttr(CORTO_ATTR_DEFAULT);
+        attr = corto_set_attr(CORTO_ATTR_DEFAULT);
         test_SuiteData_setup(this);
 
         /* Setup termination guard */
@@ -128,7 +128,7 @@ int16_t test_SuiteData_run(
         if (corto_function(testcase)->kind == CORTO_PROCEDURE_CDECL) {
             ((void(*)(corto_object))corto_function(testcase)->fptr)(this);
         } else {
-            corto_call(corto_function(testcase), NULL, this);
+            corto_invoke(corto_function(testcase), NULL, this);
         }
         if (!this->assertCount) {
             test_empty();
@@ -140,7 +140,7 @@ int16_t test_SuiteData_run(
             test_SuiteData_teardown(this);
         }
         corto_tls_set(test_suiteKey, NULL);
-        corto_setAttr(attr);
+        corto_set_attr(attr);
 
         /* Stop termination guard */
         if (guard) {

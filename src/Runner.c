@@ -2,7 +2,7 @@
 
 #include <corto/test/test.h>
 
-#define FIND(parent, id) corto(parent, id, NULL, NULL, NULL, NULL, -1, 0)
+#define FIND(p, i) corto(CORTO_LOOKUP, {.parent=p, .id=i})
 
 void test_updateProgress(test_Runner this) {
     if (corto_ll_count(this->failures)) {
@@ -57,7 +57,8 @@ int16_t test_Runner_construct(
 
             corto_log_push(strarg("test:%s", this->testcase));
             corto_type testClass = corto_parentof(testcase);
-            test_SuiteData suite = test_SuiteData(corto_create(testClass));
+
+            test_SuiteData suite = test_SuiteData(corto_create(NULL, NULL, testClass));
 
             if (corto_getenv("CORTO_TEST_BY_ID") && !stricmp(corto_getenv("CORTO_TEST_BY_ID"), "true")) {
                 corto_id cmd;
@@ -70,9 +71,9 @@ int16_t test_Runner_construct(
                 corto_claim(testcase);
                 corto_ll_append(this->failures, testcase);
             } else {
-                corto_object prev = corto_setOwner(this);
+                corto_object prev = corto_set_source(this);
                 corto_define(suite);
-                corto_setOwner(prev);
+                corto_set_source(prev);
 
                 corto_ok("DONE  %s", this->testcase);
             }

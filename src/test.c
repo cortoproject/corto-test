@@ -192,7 +192,7 @@ void test_empty(void)
 {
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::fail called but no testsuite is running!");
+        corto_error("test: test/fail called but no testsuite is running!");
         abort();
     }
 

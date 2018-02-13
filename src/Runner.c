@@ -110,7 +110,7 @@ void test_Runner_destruct(
 }
 
 void test_Runner_runTest(
-    corto_observerEvent *e)
+    corto_observer_event *e)
 {
     test_Runner this = e->instance;
     corto_object object = e->data;

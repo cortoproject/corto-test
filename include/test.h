@@ -8,7 +8,6 @@
 #define CORTO_TEST_H
 
 #include <corto/corto.h>
-#include <corto/corto.h>
 #include <corto/test/_project.h>
 #include <corto/c/c.h>
 

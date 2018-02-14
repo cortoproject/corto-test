@@ -34,9 +34,9 @@ class Runner:/
     member name: string
     member lib: string
     member testcase: string
-    member successes: list{test/Case}, readonly
-    member failures: list{test/Case}, readonly
-    member empty: list{test/Case}, readonly
+    member successes: list{test/Case}, readonly|not_null
+    member failures: list{test/Case}, readonly|not_null
+    member empty: list{test/Case}, readonly|not_null
     member testsRun: int32, readonly
     member timer: vstore/time, readonly
     int16 construct()

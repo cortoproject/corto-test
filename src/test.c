@@ -2,15 +2,16 @@
 
 #include <corto/test/test.h>
 corto_tls test_suiteKey;
+
 void test_erase(void) {
     int i;
     for (i = 0; i < 255; i++) {
         fprintf(stderr, "\b");
     }
-
 }
 
 #define FIND(p, i) corto(CORTO_LOOKUP, {.parent=p, .id=i})
+
 corto_string test_id(corto_id buffer, corto_object testcase) {
     corto_string result = NULL;
     corto_object testroot = FIND(root_o, "test");
@@ -182,7 +183,6 @@ bool test_assertstr(
             corto_dealloc(assertMsg);
             return FALSE;
         }
-
     }
 
     return TRUE;
@@ -290,4 +290,10 @@ int cortomain(int argc, char *argv[]) {
     }
 
     return 0;
+}
+
+void test_thread_init_suite(
+    test_SuiteData suite)
+{
+    corto_tls_set(test_suiteKey, suite);
 }

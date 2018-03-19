@@ -27,6 +27,8 @@ class SuiteData:/
     void teardown() overridable
     int16 run(test/Case testcase)
 
+void thread_init_suite(test/SuiteData suite)
+
 class Suite{class, options={defaultType=member, defaultProcedureType=test/Case}}:/
     int16 construct()
 

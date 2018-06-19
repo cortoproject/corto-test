@@ -103,8 +103,6 @@ int16_t test_SuiteData_run(
 
     if (testcase) {
         corto_attr attr;
-
-        this->result.success = TRUE;
         extern corto_tls test_suiteKey;
         corto_thread guard = 0;
         test_guard_t *data = NULL;

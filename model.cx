@@ -1,6 +1,6 @@
 in package corto/test
 
-procedure Case: hasThis = true, base = method
+procedure Case: has_this = true, base = method
 
 void fail(string err)
 void empty()
@@ -29,7 +29,7 @@ class SuiteData:/
 
 void thread_init_suite(test/SuiteData suite)
 
-class Suite{class, options={defaultType=member, defaultProcedureType=test/Case}}:/
+class Suite{class, options={scope_type=member, scope_procedure_type=test/Case}}:/
     int16 construct()
 
 class Runner:/

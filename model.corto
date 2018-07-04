@@ -1,0 +1,179 @@
+in corto.test
+
+class SuiteData
+
+/** Assert whether a condition is true.
+ * When the condition evaluates to false, the testcase will fail. If a testcase
+ * contains no assertions, it will be reportes as empty. When a failure occurs,
+ * the process executing the testcase will exit.
+ *
+ * @param condition Condition to evaluate.
+ */
+assert(
+    bool condition,
+    string $condition,
+    int32 $__line) void
+
+/** Assert whether two strings are equal.
+ *
+ * @param s1 First string.
+ * @param s2 Second string.
+ * @see corto.test.assert
+ */
+assertstr(
+    string s1,
+    string s2,
+    string $s1,
+    string $s2,
+    int32 $__line) void
+
+/** Assert whether two integers are equal.
+ *
+ * @param i1 First number.
+ * @param i2 Second number.
+ * @see corto.test.assert
+ */
+assertint(
+    uint64 i1,
+    uint64 i2,
+    string $i1,
+    string $i2,
+    int32 $__line) void
+
+/** Assert whether two floating point numbers are equal.
+ *
+ * @param f1 First number.
+ * @param f2 Second number.
+ * @see corto.test.assert
+ */
+assertflt(
+    float64 f1,
+    float64 f2,
+    string $f1,
+    string $f2,
+    int32 $__line) void
+
+/** Assert whether two values are equal.
+ *
+ * @param a First value.
+ * @param b Second value.
+ * @see corto.test.assert
+ */
+assertEqual(
+    any a,
+    any b,
+    string $a,
+    string $b,
+    int32 $__line) void
+
+/** Set testcase expiry timeout.
+ * When this timeout expires, the testcase will be automatically terminated. The
+ * default is set to 10 seconds. The timeout provided by this function will only
+ * apply to the testcase from which the function is called.
+ *
+ * @param t Timeout for the testcase.
+ */
+setTimeout(
+    corto.vstore.time t) void
+
+/** Returns whether the testcase is running slower than normal.
+ * The test framework might run testcases in code analyzer tools, like memory
+ * checkers, which can significantly impact the time spent in a testcase. For
+ * certain kinds of testcases, for example those that do load testing, this
+ * function can be used by the testcase to reduce the number of iterations to
+ * limit the amount of time spent in a testcase. */
+runslow() bool
+
+/** Initialize a thread with a test suite.
+ * In multi-threaded tests, the test framework is not able to determine which
+ * test case is running. This function can be used in a spawned thread to set
+ * the test suite data for the current thread.
+ *
+ * @param The suite to set for the thread.
+ */
+thread_init_suite(
+    test.SuiteData suite) void
+
+/* Functions for internal usage */
+fail(string err) void
+empty() void
+
+/** New procedure type for test case */
+procedure Case = {has_this: true, base: method}
+
+/** The base class for a test suite */
+class SuiteData {
+    /** The test case to run */
+    testcase: test.Case, readonly
+
+    /* The number of asserts encountered in a test case */
+    assertCount: uint32
+
+    /* The timeout for the current test case */
+    timeout: time, readonly
+
+    /* Is the test case tearing down */
+    tearingDown: bool, readonly
+
+    /** Constructor */
+    construct() int16
+
+    /** Run one test case from the suite */
+    run(test.Case testcase) int16
+
+overridable
+    /** Overridable setup method, called once per test case */
+    setup() void
+
+    /** Overridable teardown method, called once per test case */
+    teardown() void
+}
+
+/** The test-suite meta type.
+ * A test suite is a specialized class that automatically makes its instances
+ * inherit from test.SuiteData. In addition, it sets the default procedure type
+ * to test.Case, so that test definitions do not have to explicitly specify the
+ * type for test case procedures.
+ */
+class Suite = {
+    base: class,
+    scope_type: member,
+    scope_procedure_type: test.Case}
+{
+    construct() int16
+}
+
+/** The test runner.
+ * The test runner automatically detects test cases, and runs them in a separate
+ * executable. The runner is data-driven, and will start running test cases as
+ * soon as it is instantiated. The thread that instantiated the runner will be
+ * blocked until the runner finishes test case execution.
+ *
+ * After the runner is finished, the application can see if there were failures
+ * by inspecting the 'failures' list.
+ */
+class Runner {
+    /** Free-form name for the current test run */
+    name: string
+
+    /** Valid library path that contains the testcases to run (may be NULL) */
+    lib: string
+
+    /** Test case id to run (if NULL, all found cases are run) */
+    testcase: string
+
+    /** Administration of succeeded, failed and empty test cases */
+    successes: list[test.Case], readonly|not_null
+    failures: list[test.Case], readonly|not_null
+    empty: list[test.Case], readonly|not_null
+    testsRun: int32, readonly
+
+    /** Variable to track of how long a test case has been running */
+    timer: time, readonly
+
+    construct() int16
+    destruct() void
+
+    /** This observer will trigger on all existing and new test cases. */
+    observer runTest: define | on_tree
+}

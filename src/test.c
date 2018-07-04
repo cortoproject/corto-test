@@ -31,10 +31,10 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
     return buffer;
 }
 
-bool test_assert(
+void test_assert(
     bool condition,
     const char *str_condition,
-    uint32_t __line)
+    int32_t __line)
 {
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
@@ -48,16 +48,14 @@ bool test_assert(
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
     }
-
-    return !condition;
 }
 
-bool test_assertEqual(
+void test_assertEqual(
     corto_any a,
     corto_any b,
     const char *str_a,
     const char *str_b,
-    uint32_t __line)
+    int32_t __line)
 {
     corto_equalityKind eq;
     char *assertMsg = NULL;
@@ -74,16 +72,14 @@ bool test_assertEqual(
         test_fail(assertMsg);
         corto_dealloc(assertMsg);
     }
-
-    return (eq != CORTO_EQ);
 }
 
-bool test_assertflt(
+void test_assertflt(
     double f1,
     double f2,
     const char *str_f1,
     const char *str_f2,
-    uint32_t __line)
+    int32_t __line)
 {
     char *assertMsg = NULL;
     test_SuiteData this = corto_tls_get(test_suiteKey);
@@ -113,16 +109,14 @@ bool test_assertflt(
         corto_dealloc(si1);
         corto_dealloc(si2);
     }
-
-    return f1 == f2;
 }
 
-bool test_assertint(
+void test_assertint(
     uint64_t i1,
     uint64_t i2,
     const char *str_i1,
     const char *str_i2,
-    uint32_t __line)
+    int32_t __line)
 {
     char *assertMsg = NULL;
     test_SuiteData this = corto_tls_get(test_suiteKey);
@@ -152,16 +146,14 @@ bool test_assertint(
         corto_dealloc(si1);
         corto_dealloc(si2);
     }
-
-    return i1 == i2;
 }
 
-bool test_assertstr(
+void test_assertstr(
     const char *s1,
     const char *s2,
     const char *str_s1,
     const char *str_s2,
-    uint32_t __line)
+    int32_t __line)
 {
     char *assertMsg = NULL;
     test_SuiteData this = corto_tls_get(test_suiteKey);
@@ -181,11 +173,8 @@ bool test_assertstr(
 
             test_fail(assertMsg);
             corto_dealloc(assertMsg);
-            return FALSE;
         }
     }
-
-    return TRUE;
 }
 
 void test_empty(void)
@@ -217,11 +206,6 @@ void test_fail(
     if (!this) {
         corto_error("test: test::fail called but no testsuite is running!");
         abort();
-    }
-
-    if (this->result.success) {
-        this->result.errmsg = corto_strdup(err);
-        this->result.success = FALSE;
     }
 
     for (i = 0; i < 255; i++) {
@@ -259,7 +243,6 @@ bool test_runslow(void)
     } else {
         return FALSE;
     }
-
 }
 
 void test_setTimeout(

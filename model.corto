@@ -53,6 +53,19 @@ assertflt(
     string $f2,
     int32 $__line) void
 
+/** Assert whether two floating point numbers are equal.
+ *
+ * @param f1 First reference.
+ * @param f2 Second reference.
+ * @see corto.test.assert
+ */
+assertref(
+    object o1,
+    object o2,
+    string $o1,
+    string $o2,
+    int32 $__line) void
+
 /** Assert whether two values are equal.
  *
  * @param a First value.

@@ -38,7 +38,7 @@ void test_assert(
 {
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::fail called but no testsuite is running!");
+        corto_error("test.fail called but no testsuite is running!");
         abort();
     }
 
@@ -61,7 +61,7 @@ void test_assertEqual(
     char *assertMsg = NULL;
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::fail called but no testsuite is running!");
+        corto_error("test.fail called but no testsuite is running!");
         abort();
     }
 
@@ -84,7 +84,7 @@ void test_assertflt(
     char *assertMsg = NULL;
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::fail called but no testsuite is running!");
+        corto_error("test.fail called but no testsuite is running!");
         abort();
     }
 
@@ -121,7 +121,7 @@ void test_assertint(
     char *assertMsg = NULL;
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::fail called but no testsuite is running!");
+        corto_error("test.fail called but no testsuite is running!");
         abort();
     }
 
@@ -158,7 +158,7 @@ void test_assertstr(
     char *assertMsg = NULL;
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::fail called but no testsuite is running!");
+        corto_error("test.fail called but no testsuite is running!");
         abort();
     }
 
@@ -177,11 +177,39 @@ void test_assertstr(
     }
 }
 
+void test_assertref(
+    corto_object o1,
+    corto_object o2,
+    const char *str_o1,
+    const char *str_o2,
+    int32_t __line)
+{
+    char *assertMsg = NULL;
+    test_SuiteData this = corto_tls_get(test_suiteKey);
+    if (!this) {
+        corto_error("test.fail called but no testsuite is running!");
+        abort();
+    }
+
+    this->assertCount++;
+    if (o1 != o2) {
+        assertMsg = corto_asprintf("%d: %s (%s) != %s (%s)",
+            __line,
+            str_o1,
+            corto_fullpath(NULL, o1),
+            str_o2,
+            corto_fullpath(NULL, o2));
+        test_fail(assertMsg);
+        corto_dealloc(assertMsg);
+    }
+}
+
+
 void test_empty(void)
 {
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test/fail called but no testsuite is running!");
+        corto_error("test/fail called but no testsuite is running!");
         abort();
     }
 
@@ -204,7 +232,7 @@ void test_fail(
     int i;
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::fail called but no testsuite is running!");
+        corto_error("test.fail called but no testsuite is running!");
         abort();
     }
 
@@ -250,7 +278,7 @@ void test_setTimeout(
 {
     test_SuiteData this = corto_tls_get(test_suiteKey);
     if (!this) {
-        corto_error("test: test::setTimeout called but no testsuite is running!");
+        corto_error("test::setTimeout called but no testsuite is running!");
         abort();
     }
 

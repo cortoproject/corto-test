@@ -112,7 +112,10 @@ fail(string err) void
 empty() void
 
 /** New procedure type for test case */
-procedure Case = {has_this: true, base: method}
+procedure Case = {has_this: true, base: method, base_modifiers: GLOBAL|HIDDEN}
+{
+  member dataProvider: list[object]
+}
 
 /** The base class for a test suite */
 class SuiteData {

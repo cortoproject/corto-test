@@ -115,142 +115,145 @@ void test_Runner_runTest(
     test_Runner this = e->instance;
     corto_object object = e->data;
 
-    if (corto_instanceof(corto_type(test_Case_o), object)) {
-        corto_id testcaseId;
-        corto_int8 err = 0, ret = 0;
-        corto_string ciEnv = corto_getenv("CI");
+    if (!corto_instanceof(corto_type(test_Case_o), object)) {
+        goto end;
+    }
 
-        /* Set TARGET to temporary environment so tests can't contaminate the
-         * current environment */
-        char *oldenv = corto_getenv("BAKE_TARGET");
+    corto_id testcaseId;
+    corto_int8 err = 0, ret = 0;
+    corto_string ciEnv = corto_getenv("CI");
 
-        corto_setenv("BAKE_TARGET", "$HOME/.corto_tmp");
+    /* Set TARGET to temporary environment so tests can't contaminate the
+     * current environment */
+    char *oldenv = corto_getenv("BAKE_TARGET");
 
-        test_id(testcaseId, object);
+    corto_setenv("BAKE_TARGET", "$HOME/.corto_tmp");
 
-        {
-            corto_id cmd; (void)cmd;
-            corto_trace("\ntest: TESTCASE %s", testcaseId);
-            corto_trace("test:   EXEC  %s",
-                test_command(cmd, this->lib, object));
-        }
+    test_id(testcaseId, object);
 
-        char *tool = getenv("CORTO_TEST_TOOL");
-        corto_proc pid = 0;
+    {
+        corto_id cmd; (void)cmd;
+        corto_trace("\ntest: TESTCASE %s", testcaseId);
+        corto_trace("test:   EXEC  %s",
+            test_command(cmd, this->lib, object));
+    }
 
-        if (!tool || !strcmp(tool, "")) {
-            pid = corto_proc_run(
+    char *tool = getenv("CORTO_TEST_TOOL");
+    corto_proc pid = 0;
+
+    if (!tool || !strcmp(tool, "")) {
+        pid = corto_proc_run(
+            "corto",
+            (char*[]){
                 "corto",
+                "--mute",
+                "-l",
+                this->lib,
+                testcaseId,
+                NULL
+            }
+        );
+    } else if (!strcmp(tool, "check-memory")) {
+        setenv("CORTO_TEST_RUNSLOW", "TRUE", 1);
+        if (!strcmp(CORTO_OS_STRING, "linux")) {
+            pid = corto_proc_run(
+                "valgrind",
                 (char*[]){
+                    "valgrind",
+                    "-q",
                     "corto",
-                    "--mute",
                     "-l",
                     this->lib,
                     testcaseId,
                     NULL
                 }
             );
-        } else if (!strcmp(tool, "check-memory")) {
-            setenv("CORTO_TEST_RUNSLOW", "TRUE", 1);
-            if (!strcmp(CORTO_OS_STRING, "linux")) {
-                pid = corto_proc_run(
-                    "valgrind",
-                    (char*[]){
-                        "valgrind",
-                        "-q",
-                        "corto",
-                        "-l",
-                        this->lib,
-                        testcaseId,
-                        NULL
-                    }
-                );
-            } else {
-                corto_throw("check-memory is only supported on Linux (uses valgrind)");
-            }
-        } else if (!strcmp(tool, "check-thread")) {
-            setenv("CORTO_TEST_RUNSLOW", "TRUE", 1);
-            if (!strcmp(CORTO_OS_STRING, "linux")) {
-                pid = corto_proc_run(
-                    "valgrind",
-                    (char*[]){
-                        "valgrind",
-                        "-q",
-                        "--tool=helgrind",
-                        "corto",
-                        "-l",
-                        this->lib,
-                        testcaseId,
-                        NULL
-                    }
-                );
-            } else {
-                corto_throw("check-thread is only supported on Linux (uses valgrind)");
-            }
+        } else {
+            corto_throw("check-memory is only supported on Linux (uses valgrind)");
         }
+    } else if (!strcmp(tool, "check-thread")) {
+        setenv("CORTO_TEST_RUNSLOW", "TRUE", 1);
+        if (!strcmp(CORTO_OS_STRING, "linux")) {
+            pid = corto_proc_run(
+                "valgrind",
+                (char*[]){
+                    "valgrind",
+                    "-q",
+                    "--tool=helgrind",
+                    "corto",
+                    "-l",
+                    this->lib,
+                    testcaseId,
+                    NULL
+                }
+            );
+        } else {
+            corto_throw("check-thread is only supported on Linux (uses valgrind)");
+        }
+    }
 
-        if (!pid) {
-            corto_raise();
+    if (!pid) {
+        corto_raise();
+        corto_log("#[red]FAIL#[normal]: %s\n",
+            testcaseId);
+    } else if ((err = corto_proc_wait(pid, &ret)) || ret) {
+        if (err > 0) {
+            corto_catch();
+            test_erase();
+            corto_log("#[red]FAIL#[normal]: %s: test crashed with signal %d\n",
+                testcaseId, err);
+        } else if (err < 0) {
             corto_log("#[red]FAIL#[normal]: %s\n",
                 testcaseId);
-        } else if ((err = corto_proc_wait(pid, &ret)) || ret) {
-            if (err > 0) {
-                corto_catch();
-                test_erase();
-                corto_log("#[red]FAIL#[normal]: %s: test crashed with signal %d\n",
-                    testcaseId, err);
-            } else if (err < 0) {
-                corto_log("#[red]FAIL#[normal]: %s\n",
-                    testcaseId);
-            } else {
-                /* Process exited with a returncode != 0 so
-                 * must've printed an error msg itself */
-                corto_catch();
-            }
-            if (!ciEnv || stricmp(ciEnv, "true")) {
-                corto_id cmd;
-                corto_log(" Use this command to debug the testcase:\n  %s\n\n",
-                    test_command(cmd, this->lib, object));
-            }
+        } else {
+            /* Process exited with a returncode != 0 so
+             * must've printed an error msg itself */
+            corto_catch();
+        }
+        if (!ciEnv || stricmp(ciEnv, "true")) {
+            corto_id cmd;
+            corto_log(" Use this command to debug the testcase:\n  %s\n\n",
+                test_command(cmd, this->lib, object));
+        }
 
-            if (ret == 1) {
-                corto_claim(object);
-                corto_ll_append(this->empty, object);
-            } else {
-                corto_claim(object);
-                corto_ll_append(this->failures, object);
-            }
+        if (ret == 1) {
+            corto_claim(object);
+            corto_ll_append(this->empty, object);
         } else {
             corto_claim(object);
-            corto_ll_append(this->successes, object);
+            corto_ll_append(this->failures, object);
         }
-        this->testsRun++;
-
-        /* Don't print statistics when in CI mode */
-        if ((!ciEnv || stricmp(ciEnv, "true")) && (corto_log_verbosityGet() > CORTO_TRACE)) {
-            corto_time start;
-            corto_time_get(&start);
-            corto_float64 diff =
-              corto_time_toDouble(start) - corto_time_toDouble(this->timer);
-
-            if (diff > 0.05) {
-                test_updateProgress(this);
-                corto_time_get(&this->timer);
-            }
-        } else {
-            /* When in CI mode, show each individual testcase. Failures are
-             * already reported. */
-            if (!err && !ret) {
-                corto_log("#[green]%s#[normal]: %s\n",
-                    "PASS",
-                    testcaseId);
-            }
-        }
-
-        if (corto_rm(corto_getenv("BAKE_TARGET"))) {
-            corto_lasterr(); /* Catch error */
-            corto_throw(NULL);
-        }
-        corto_setenv("BAKE_TARGET", oldenv);
+    } else {
+        corto_claim(object);
+        corto_ll_append(this->successes, object);
     }
+    this->testsRun++;
+
+    /* Don't print statistics when in CI mode */
+    if ((!ciEnv || stricmp(ciEnv, "true")) && (corto_log_verbosityGet() > CORTO_TRACE)) {
+        corto_time start;
+        corto_time_get(&start);
+        corto_float64 diff =
+          corto_time_toDouble(start) - corto_time_toDouble(this->timer);
+
+        if (diff > 0.05) {
+            test_updateProgress(this);
+            corto_time_get(&this->timer);
+        }
+    } else {
+        /* When in CI mode, show each individual testcase. Failures are
+         * already reported. */
+        if (!err && !ret) {
+            corto_log("#[green]%s#[normal]: %s\n",
+                "PASS",
+                testcaseId);
+        }
+    }
+
+    if (corto_rm(corto_getenv("BAKE_TARGET"))) {
+        corto_lasterr(); /* Catch error */
+        corto_throw(NULL);
+    }
+    corto_setenv("BAKE_TARGET", oldenv);
+end:;
 }

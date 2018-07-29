@@ -4,6 +4,38 @@
 
 #define FIND(p, i) corto(CORTO_LOOKUP, {.parent=p, .id=i})
 
+static void test_updateProgress(test_Runner this) {
+    if (corto_ll_count(this->failures)) {
+        if (corto_ll_count(this->empty)) {
+            corto_log("#[]%s: PASS:%d, #[red]FAIL#[normal]:%d, #[yellow]EMPTY#[normal]:%d",
+                this->name,
+                corto_ll_count(this->successes),
+                corto_ll_count(this->failures),
+                corto_ll_count(this->empty));
+            } else {
+                corto_log("#[]%s: PASS:%d, #[red]FAIL#[normal]:%d, EMPTY:%d",
+                    this->name,
+                    corto_ll_count(this->successes),
+                    corto_ll_count(this->failures),
+                    corto_ll_count(this->empty));
+            }
+    } else {
+        if (corto_ll_count(this->empty)) {
+            corto_log("#[]%s: #[green]PASS#[normal]:%d, FAIL:%d, #[yellow]EMPTY#[normal]:%d",
+                this->name,
+                corto_ll_count(this->successes),
+                corto_ll_count(this->failures),
+                corto_ll_count(this->empty));
+        } else {
+            corto_log("#[]%s: #[green]PASS#[normal]:%d, FAIL:%d, EMPTY:%d",
+                this->name,
+                corto_ll_count(this->successes),
+                corto_ll_count(this->failures),
+                corto_ll_count(this->empty));
+        }
+    }
+}
+
 static corto_proc test_Runner_forkTestCase(test_Runner this, corto_id testcaseId) {
     char *tool = getenv("CORTO_TEST_TOOL");
     corto_proc pid = 0;
@@ -41,38 +73,6 @@ static corto_proc test_Runner_forkTestCase(test_Runner this, corto_id testcaseId
     }
 end:
     return pid;
-}
-
-void test_updateProgress(test_Runner this) {
-    if (corto_ll_count(this->failures)) {
-        if (corto_ll_count(this->empty)) {
-            corto_log("#[]%s: PASS:%d, #[red]FAIL#[normal]:%d, #[yellow]EMPTY#[normal]:%d",
-                this->name,
-                corto_ll_count(this->successes),
-                corto_ll_count(this->failures),
-                corto_ll_count(this->empty));
-            } else {
-                corto_log("#[]%s: PASS:%d, #[red]FAIL#[normal]:%d, EMPTY:%d",
-                    this->name,
-                    corto_ll_count(this->successes),
-                    corto_ll_count(this->failures),
-                    corto_ll_count(this->empty));
-            }
-    } else {
-        if (corto_ll_count(this->empty)) {
-            corto_log("#[]%s: #[green]PASS#[normal]:%d, FAIL:%d, #[yellow]EMPTY#[normal]:%d",
-                this->name,
-                corto_ll_count(this->successes),
-                corto_ll_count(this->failures),
-                corto_ll_count(this->empty));
-        } else {
-            corto_log("#[]%s: #[green]PASS#[normal]:%d, FAIL:%d, EMPTY:%d",
-                this->name,
-                corto_ll_count(this->successes),
-                corto_ll_count(this->failures),
-                corto_ll_count(this->empty));
-        }
-    }
 }
 
 int16_t test_Runner_construct(

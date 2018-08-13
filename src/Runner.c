@@ -36,7 +36,10 @@ static void test_updateProgress(test_Runner this) {
     }
 }
 
-static corto_proc test_Runner_forkTestCase(test_Runner this, corto_id testcaseId) {
+static corto_proc test_Runner_forkTestCase(
+    test_Runner this,
+    corto_id testcaseId
+) {
     char *tool = getenv("CORTO_TEST_TOOL");
     corto_proc pid = 0;
 
@@ -73,6 +76,40 @@ static corto_proc test_Runner_forkTestCase(test_Runner this, corto_id testcaseId
     }
 end:
     return pid;
+}
+
+static void test_Runner_handleExitCode(
+    test_Runner this,
+    corto_object object,
+    corto_id testcaseId,
+    corto_string ciEnv,
+    corto_int8 err,
+    corto_int8 ret
+) {
+  if (err > 0) {
+     corto_catch();
+     test_erase();
+     corto_log("#[red]FAIL#[normal]: %s: test crashed with signal %d\n", testcaseId, err);
+     } else if (err < 0) {
+        corto_log("#[red]FAIL#[normal]: %s\n", testcaseId);
+    } else {
+        /* Process exited with a returncode != 0 so
+         * must've printed an error msg itself */
+        corto_catch();
+    }
+    if (!ciEnv || stricmp(ciEnv, "true")) {
+        corto_id cmd;
+        corto_log(" Use this command to debug the testcase:\n  %s\n\n",
+            test_command(cmd, this->lib, object));
+    }
+
+    if (ret == 1) {
+        corto_claim(object);
+        corto_ll_append(this->empty, object);
+    } else {
+        corto_claim(object);
+        corto_ll_append(this->failures, object);
+    }
 }
 
 int16_t test_Runner_construct(
@@ -181,35 +218,9 @@ void test_Runner_runTest(
 
     if (!pid) {
         corto_raise();
-        corto_log("#[red]FAIL#[normal]: %s\n",
-            testcaseId);
+        corto_log("#[red]FAIL#[normal]: %s\n", testcaseId);
     } else if ((err = corto_proc_wait(pid, &ret)) || ret) {
-        if (err > 0) {
-            corto_catch();
-            test_erase();
-            corto_log("#[red]FAIL#[normal]: %s: test crashed with signal %d\n",
-                testcaseId, err);
-        } else if (err < 0) {
-            corto_log("#[red]FAIL#[normal]: %s\n",
-                testcaseId);
-        } else {
-            /* Process exited with a returncode != 0 so
-             * must've printed an error msg itself */
-            corto_catch();
-        }
-        if (!ciEnv || stricmp(ciEnv, "true")) {
-            corto_id cmd;
-            corto_log(" Use this command to debug the testcase:\n  %s\n\n",
-                test_command(cmd, this->lib, object));
-        }
-
-        if (ret == 1) {
-            corto_claim(object);
-            corto_ll_append(this->empty, object);
-        } else {
-            corto_claim(object);
-            corto_ll_append(this->failures, object);
-        }
+      test_Runner_handleExitCode(this, object, testcaseId, ciEnv, err, ret);
     } else {
         corto_claim(object);
         corto_ll_append(this->successes, object);

@@ -1,6 +1,7 @@
 {
-    "id": "corto/test",
+    "id": "corto.test",
     "type": "package",
+    "corto": { },
     "value": {
         "author": "Jonny Lee Othon, Sander Mertens",
         "description": "Test framework for corto",

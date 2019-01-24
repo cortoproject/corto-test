@@ -6,9 +6,9 @@
 #ifndef CORTO_TEST_H
 #define CORTO_TEST_H
 
-#include <corto/corto.h>
-#include <corto/test/_project.h>
-#include <corto/c/c.h>
+#include "bake_config.h"
+
+#define CORTO_TEST_ETC ut_locate("corto.test", NULL, UT_LOCATE_ETC)
 
 /* $header() */
 #ifdef __cplusplus
@@ -24,11 +24,12 @@ corto_string test_command(corto_id buffer, corto_string lib, corto_object testca
 #endif
 /* $end */
 
-#include <corto/test/_type.h>
-#include <corto/test/_interface.h>
-#include <corto/test/_load.h>
-#include <corto/test/_binding.h>
-#include <corto/test/c/_api.h>
+#include "_type.h"
+#include "_interface.h"
+#include "_load.h"
+#include "_binding.h"
+
+#include <corto.test.c>
 
 /* $body() */
 /* Enter code that requires types here */

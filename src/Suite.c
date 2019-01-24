@@ -1,6 +1,6 @@
 /* This is a managed file. Do not delete this comment. */
 
-#include <corto/test/test.h>
+#include <corto.test>
 int16_t test_Suite_construct(
     test_Suite this)
 {

@@ -2,13 +2,13 @@
 
 #define FIND(p, i) corto(CORTO_LOOKUP, {.parent=p, .id=i})
 
-#include <corto/test/test.h>
+#include <corto.test>
 int16_t test_SuiteData_construct(
     test_SuiteData this)
 {
     CORTO_UNUSED(this);
 
-    if (corto_getenv("CI")) {
+    if (ut_getenv("CI")) {
         /* Use less strict timings in less predictable CI environments */
         this->timeout.sec = 30;
         this->timeout.nanosec = 0;
@@ -23,7 +23,7 @@ int16_t test_SuiteData_construct(
 typedef struct test_guard_t {
     test_SuiteData suite;
     corto_object testcase;
-    struct corto_mutex_s m;
+    struct ut_mutex_s m;
 } test_guard_t;
 
 void* test_guard(void *arg) {
@@ -43,7 +43,7 @@ void* test_guard(void *arg) {
     /* Testcase may change timeout, so after each timeout verify whether timeout
      * has changed, and whether a new wait is required */
     do {
-        if (corto_mutex_lockTimed(&data->m, tsExpire) == ETIMEDOUT) {
+        if (ut_mutex_lockTimed(&data->m, tsExpire) == ETIMEDOUT) {
             corto_time newTimeout, now;
 
             corto_time_get(&now);
@@ -68,7 +68,7 @@ void* test_guard(void *arg) {
                 quit = 1;
             }
         } else {
-            corto_mutex_unlock(&data->m);
+            ut_mutex_unlock(&data->m);
             break; /* Testcase finished */
         }
     } while (!quit);
@@ -84,8 +84,8 @@ void* test_guard(void *arg) {
                 break;
         }
         corto_object testroot = FIND(root_o, "test");
-        corto_assert(testroot != NULL, "testroot disappeared?");
-        corto_error("test: testcase '%s' timed out after %ss",
+        ut_assert(testroot != NULL, "testroot disappeared?");
+        ut_error("test: testcase '%s' timed out after %ss",
           test_id(NULL, data->testcase),
           timeFmt);
 
@@ -104,12 +104,12 @@ int16_t test_SuiteData_run(
     if (testcase) {
         corto_attr attr;
 
-        extern corto_tls test_suiteKey;
-        corto_thread guard = 0;
+        extern ut_tls test_suiteKey;
+        ut_thread guard = 0;
         test_guard_t *data = NULL;
 
         /* Setup test */
-        corto_tls_set(test_suiteKey, this);
+        ut_tls_set(test_suiteKey, this);
         attr = corto_set_attr(CORTO_ATTR_DEFAULT);
         test_SuiteData_setup(this);
 
@@ -118,9 +118,9 @@ int16_t test_SuiteData_run(
             data = corto_alloc(sizeof(test_guard_t));
             data->suite = this;
             data->testcase = testcase;
-            corto_mutex_new(&data->m);
-            corto_mutex_lock(&data->m);
-            guard = corto_thread_new(test_guard, data);
+            ut_mutex_new(&data->m);
+            ut_mutex_lock(&data->m);
+            guard = ut_thread_new(test_guard, data);
         }
 
         this->assertCount = 0;
@@ -138,17 +138,17 @@ int16_t test_SuiteData_run(
             this->tearingDown = TRUE;
             test_SuiteData_teardown(this);
         }
-        corto_tls_set(test_suiteKey, NULL);
+        ut_tls_set(test_suiteKey, NULL);
         corto_set_attr(attr);
 
         /* Stop termination guard */
         if (guard) {
-            corto_mutex_unlock(&data->m);
-            corto_thread_join(guard, NULL);
+            ut_mutex_unlock(&data->m);
+            ut_thread_join(guard, NULL);
             corto_dealloc(data);
         }
     } else {
-        corto_throw("no test provided for suite '%s'", corto_idof(this));
+        ut_throw("no test provided for suite '%s'", corto_idof(this));
         goto error;
     }
 

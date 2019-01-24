@@ -53,7 +53,7 @@ assertflt(
     string $f2,
     int32 $__line) void
 
-/** Assert whether two floating point numbers are equal.
+/** Assert whether two references are equal.
  *
  * @param f1 First reference.
  * @param f2 Second reference.

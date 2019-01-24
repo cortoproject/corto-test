@@ -89,28 +89,28 @@ static void test_Runner_handleExitCode(
     corto_int8 ret
 ) {
   if (err > 0) {
-     corto_catch();
+     ut_catch();
      test_erase();
-     corto_log("#[red]FAIL#[normal]: %s: test crashed with signal %d\n", testcaseId, err);
+     ut_log("#[red]FAIL#[normal]: %s: test crashed with signal %d\n", testcaseId, err);
      } else if (err < 0) {
-        corto_log("#[red]FAIL#[normal]: %s\n", testcaseId);
+        ut_log("#[red]FAIL#[normal]: %s\n", testcaseId);
     } else {
         /* Process exited with a returncode != 0 so
          * must've printed an error msg itself */
-        corto_catch();
+        ut_catch();
     }
     if (!ciEnv || stricmp(ciEnv, "true")) {
         corto_id cmd;
-        corto_log(" Use this command to debug the testcase:\n  %s\n\n",
+        ut_log(" Use this command to debug the testcase:\n  %s\n\n",
             test_command(cmd, this->lib, object));
     }
 
     if (ret == 1) {
         corto_claim(object);
-        corto_ll_append(this->empty, object);
+        ut_ll_append(this->empty, object);
     } else {
         corto_claim(object);
-        corto_ll_append(this->failures, object);
+        ut_ll_append(this->failures, object);
     }
 }
 
